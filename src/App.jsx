@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { supabase } from "../supabase";
+import { supabase } from "./supabase";
 import Login from "./Components/Login/Login";
 import Signup from "./Components/Signup/Signup";
 import Dashboard from "./Components/Dashboard/Dashboard";
