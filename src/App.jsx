@@ -9,6 +9,8 @@ import { supabase } from "./supabase";
 import Login from "./Components/Login/Login";
 import Signup from "./Components/Signup/Signup";
 import Dashboard from "./Components/Dashboard/Dashboard";
+import AllOrders from "./Components/AllOrders/AllOrders";
+import Account from "./Components/Account/Account";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -66,7 +68,6 @@ function App() {
   return (
     <Router>
       <div>
-        <h1>Parcel Tracking App</h1>
         <Routes>
           <Route
             path="/"
@@ -90,6 +91,18 @@ function App() {
               ) : (
                 <Signup onNewSignup={handleNewSignup} />
               )
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              user ? <AllOrders onLogout={handleLogout} /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              user ? <Account onLogout={handleLogout} /> : <Navigate to="/" />
             }
           />
         </Routes>

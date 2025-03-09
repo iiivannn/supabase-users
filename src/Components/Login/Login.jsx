@@ -18,13 +18,17 @@ export default function Login() {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (error) {
       setError(error.message);
     } else {
+      console.log(`User logged in: ${user.user_metadata.username}`);
       navigate("/"); // Redirect to home (ParcelStatus)
     }
   };

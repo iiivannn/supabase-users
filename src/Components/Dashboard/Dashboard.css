@@ -1,0 +1,289 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+/* NAVIGATION */
+.navigation {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #ebe5e5;
+  color: #333;
+  width: max-content;
+  border-radius: 10px;
+}
+
+.logo_img {
+  width: 300px;
+  height: auto;
+}
+
+.upper_menu,
+.lower_menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upper_menu p,
+.lower_menu p,
+.upper_menu h2,
+.lower_menu h2 {
+  margin: 0;
+}
+
+.upper_menu {
+  margin: 20px 0;
+}
+
+.upper_menu p,
+.lower_menu p {
+  margin: 20px;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+/* CARD IMAGE AND TEXT */
+.card {
+  background-color: lightgrey;
+  width: max-content;
+  padding: 10px;
+  position: relative;
+}
+
+.card_img_container {
+  height: 150px;
+  width: 600px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.card_img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.card_text {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.card_text h2,
+.card_text p {
+  margin: 0;
+  color: white;
+}
+
+/* INPUT PARCEL */
+.input_feature {
+  height: max-content;
+  width: 600px;
+
+  background-color: rgb(152, 152, 152);
+
+  padding: 10px;
+  position: relative;
+}
+
+.input_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.input_name,
+.input_barcode {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input_buttons {
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+}
+
+/* SUMMARY DASHBOARD */
+.summary_dashboard {
+  display: flex;
+  flex-direction: column;
+  background-color: aqua;
+  width: max-content;
+  padding: 10px;
+  position: relative;
+}
+
+.summary_stats {
+  display: flex;
+  gap: 15px;
+}
+
+.summary_today,
+.summary_weekly {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 20px;
+}
+
+.stats_img {
+  position: absolute;
+  top: 10px;
+  right: -30px;
+  width: 90px;
+}
+
+.button_arrow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.right_arrow {
+  width: 20px;
+}
+
+/* ORDER TABLE */
+
+.show_orders {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title-refresh {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.title-refresh h2 {
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.title-refresh button {
+  padding: 6px 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.title-refresh button:hover {
+  background-color: #0056b3;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #e0e0e0;
+}
+
+/* RECENT ACTIVITY */
+
+.recent_activity {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: 600px;
+  width: 500px;
+}
+
+.activity_contents {
+  padding-top: 20px;
+  height: 485px;
+  width: 500px;
+  overflow: hidden;
+  /* border: solid 2px #333; */
+  border-radius: 10px;
+}
+
+.activity_contents::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 10px;
+}
+
+.activity_contents::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 20px;
+}
+
+.activity_contents::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 20px;
+}
+
+.activity_contents::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.recent_activity h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.activity_card {
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.activity_card p {
+  margin: 5px 0;
+}
