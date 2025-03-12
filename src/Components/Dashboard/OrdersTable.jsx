@@ -2,12 +2,6 @@ import React from "react";
 import "./Dashboard.css";
 
 export default function OrdersTable({ topParcels, formatDate, handleRefresh }) {
-  const sortedParcels = topParcels.sort((a, b) => {
-    const dateA = a.added_on ? new Date(a.added_on) : new Date(0);
-    const dateB = b.added_on ? new Date(b.added_on) : new Date(0);
-    return dateB - dateA;
-  });
-
   return (
     <div className="show_orders">
       <div className="title-refresh">
@@ -25,7 +19,7 @@ export default function OrdersTable({ topParcels, formatDate, handleRefresh }) {
           </tr>
         </thead>
         <tbody>
-          {sortedParcels.map((parcel, index) => (
+          {topParcels.map((parcel, index) => (
             <tr key={index}>
               <td>{parcel.parcel_name}</td>
               <td>{parcel.parcel_barcode}</td>

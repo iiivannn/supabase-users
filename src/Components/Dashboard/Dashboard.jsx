@@ -10,7 +10,7 @@ import OrderSummary from "./OrderSummary";
 import "./Dashboard.css";
 
 export default function Dashboard({ userName, onLogout }) {
-  const [parcelName, setParcelName] = useState(""); // Define parcelName state
+  const [parcelName, setParcelName] = useState("");
   const [parcelBarcode, setParcelBarcode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -18,8 +18,46 @@ export default function Dashboard({ userName, onLogout }) {
   const [weekly, setWeekly] = useState(0);
   const [topParcels, setTopParcels] = useState([]);
   const [recentActivities, setRecentActivities] = useState([]);
+  const [deviceId, setDeviceId] = useState("");
 
+  // Fetch the device ID of the logged-in user
+  const getDeviceId = async () => {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.error("Error fetching user:", userError);
+      return;
+    }
+
+    // Fetch the device ID associated with the logged-in user
+    const { data: deviceData, error: deviceError } = await supabase
+      .from("unit_devices")
+      .select("device_id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (deviceError) {
+      console.error("Error fetching device ID:", deviceError);
+    } else if (deviceData) {
+      setDeviceId(deviceData.device_id);
+    }
+  };
+
+  // Fetch today's and weekly parcel counts for the logged-in user
   const getSummary = async () => {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.error("Error fetching user:", userError);
+      return;
+    }
+
     const now = new Date();
     const startOfDay = new Date(
       now.getFullYear(),
@@ -35,16 +73,20 @@ export default function Dashboard({ userName, onLogout }) {
       now.getDate() - now.getDay()
     );
 
+    // Fetch today's count for the logged-in user
     const { count: todayCount, error: todayError } = await supabase
       .from("user_order")
       .select("*", { count: "exact" })
       .eq("status", "completed")
+      .eq("username", user.user_metadata?.username || user.email)
       .gte("completed_at", startOfDay.toISOString());
 
+    // Fetch weekly count for the logged-in user
     const { count: weeklyCount, error: weeklyError } = await supabase
       .from("user_order")
       .select("*", { count: "exact" })
       .eq("status", "completed")
+      .eq("username", user.user_metadata?.username || user.email)
       .gte("completed_at", startOfWeek.toISOString());
 
     if (todayError) {
@@ -60,29 +102,48 @@ export default function Dashboard({ userName, onLogout }) {
     }
   };
 
+  // Fetch top parcels for the logged-in user
   const getTopParcels = async () => {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.error("Error fetching user:", userError);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("user_order")
       .select("parcel_name, parcel_barcode, status, added_on, completed_at")
-      .order("added_on")
+      .eq("username", user.user_metadata?.username || user.email)
+      .order("added_on", { ascending: false }) // Sort by added_on date
       .limit(5);
 
     if (error) {
       console.error("Error fetching top parcels:", error);
     } else {
-      const sortedData = data.sort((a, b) => {
-        const dateA = a.added_on ? new Date(a.added_on) : new Date(0);
-        const dateB = b.added_on ? new Date(b.added_on) : new Date(0);
-        return dateB - dateA;
-      });
-      setTopParcels(sortedData);
+      setTopParcels(data);
     }
   };
 
+  // Fetch recent activities for the logged-in user
   const getRecentActivities = async () => {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.error("Error fetching user:", userError);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("user_order")
       .select("parcel_name, status, added_on, completed_at")
+      .eq("username", user.user_metadata?.username || user.email)
       .order("added_on", { ascending: false })
       .limit(10);
 
@@ -102,12 +163,15 @@ export default function Dashboard({ userName, onLogout }) {
     }
   };
 
+  // Fetch data on component mount
   useEffect(() => {
+    getDeviceId();
     getSummary();
     getTopParcels();
     getRecentActivities();
   }, []);
 
+  // Handle inserting a new parcel
   const handleInsert = async () => {
     setError("");
     setSuccess("");
@@ -116,7 +180,7 @@ export default function Dashboard({ userName, onLogout }) {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
-    console.log("Logged-in user:", user);
+
     if (userError || !user) {
       setError("User not logged in");
       return;
@@ -124,7 +188,7 @@ export default function Dashboard({ userName, onLogout }) {
 
     const { error: insertError } = await supabase.from("user_order").insert([
       {
-        username: user.user_metadata.username,
+        username: user.user_metadata?.username || user.email,
         parcel_name: parcelName,
         parcel_barcode: parcelBarcode,
         status: "pending",
@@ -141,9 +205,9 @@ export default function Dashboard({ userName, onLogout }) {
       setSuccess("Parcel details inserted successfully");
       setParcelName("");
       setParcelBarcode("");
-      getSummary(); // Update summary after insertion
-      getTopParcels(); // Update top parcels after insertion
-      getRecentActivities(); // Update recent activities after insertion
+      getSummary(); // Update summary
+      getTopParcels(); // Update top parcels
+      getRecentActivities(); // Update recent activities
     }
   };
 
@@ -177,7 +241,7 @@ export default function Dashboard({ userName, onLogout }) {
     <div>
       {/* NAVIGATION BAR */}
       <div className="navbar">
-        <Navigation onLogout={onLogout} />
+        <Navigation onLogout={onLogout} deviceId={deviceId} />
       </div>
 
       {/* ORDERS SUMMARY */}
