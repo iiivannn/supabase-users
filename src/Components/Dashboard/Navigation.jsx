@@ -53,24 +53,26 @@ export default function Navigation({ onLogout, deviceId }) {
     <div className="navigation">
       <img className="logo_img" src={logo} alt="ParSafe Logo" />
 
-      <div className="upper_menu">
-        <h2>Quick Menu</h2>
-        <button className="link-button" onClick={() => navigate("/")}>
-          Dashboard
-        </button>
-        <button className="link-button" onClick={() => navigate("/orders")}>
-          My Orders
-        </button>
-      </div>
+      <div className="menus">
+        <div className="upper_menu">
+          <h2>Quick Menu</h2>
+          <button className="link-button" onClick={() => navigate("/")}>
+            Dashboard
+          </button>
+          <button className="link-button" onClick={() => navigate("/orders")}>
+            My Orders
+          </button>
+        </div>
 
-      <div className="lower_menu">
-        <h2>Settings</h2>
-        <button className="link-button" onClick={() => navigate("/account")}>
-          Account
-        </button>
-        <button className="link-button" onClick={handleLogout}>
-          Logout
-        </button>
+        <div className="lower_menu">
+          <h2>Settings</h2>
+          <button className="link-button" onClick={() => navigate("/account")}>
+            Account
+          </button>
+          <button className="link-button" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );

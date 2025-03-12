@@ -5,7 +5,7 @@ export default function OrdersTable({ topParcels, formatDate, handleRefresh }) {
   return (
     <div className="show_orders">
       <div className="title-refresh">
-        <h2>Top 5 Recent Parcels</h2>
+        <h2>Recent Parcels</h2>
         <button onClick={handleRefresh}>Refresh</button>
       </div>
       <table>

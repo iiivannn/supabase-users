@@ -119,7 +119,7 @@ export default function Dashboard({ userName, onLogout }) {
       .select("parcel_name, parcel_barcode, status, added_on, completed_at")
       .eq("username", user.user_metadata?.username || user.email)
       .order("added_on", { ascending: false }) // Sort by added_on date
-      .limit(5);
+      .limit(3);
 
     if (error) {
       console.error("Error fetching top parcels:", error);
@@ -145,7 +145,7 @@ export default function Dashboard({ userName, onLogout }) {
       .select("parcel_name, status, added_on, completed_at")
       .eq("username", user.user_metadata?.username || user.email)
       .order("added_on", { ascending: false })
-      .limit(10);
+      .limit(3);
 
     if (error) {
       console.error("Error fetching recent activities:", error);
@@ -244,36 +244,42 @@ export default function Dashboard({ userName, onLogout }) {
         <Navigation onLogout={onLogout} deviceId={deviceId} />
       </div>
 
-      {/* ORDERS SUMMARY */}
-      <OrderSummary userName={userName} today={today} weekly={weekly} />
+      <div className="top_components">
+        {/* PARSAFE CARD */}
+        <ParsafeCard />
 
-      {/* PARSAFE CARD */}
-      <ParsafeCard />
+        {/* ORDERS SUMMARY */}
+        <OrderSummary userName={userName} today={today} weekly={weekly} />
+      </div>
 
-      {/* ADD BARCODE */}
-      <AddParcel
-        parcelName={parcelName}
-        setParcelName={setParcelName}
-        parcelBarcode={parcelBarcode}
-        setParcelBarcode={setParcelBarcode}
-        handleInsert={handleInsert}
-        handleClear={handleClear}
-        success={success}
-        error={error}
-      />
+      <div className="bottom_components">
+        <div className="middle_components">
+          {/* ADD BARCODE */}
+          <AddParcel
+            parcelName={parcelName}
+            setParcelName={setParcelName}
+            parcelBarcode={parcelBarcode}
+            setParcelBarcode={setParcelBarcode}
+            handleInsert={handleInsert}
+            handleClear={handleClear}
+            success={success}
+            error={error}
+          />
 
-      {/* ORDERS TABLE */}
-      <OrdersTable
-        topParcels={topParcels}
-        formatDate={formatDate}
-        handleRefresh={handleRefresh}
-      />
+          {/* ORDERS TABLE */}
+          <OrdersTable
+            topParcels={topParcels}
+            formatDate={formatDate}
+            handleRefresh={handleRefresh}
+          />
+        </div>
 
-      {/* RECENT ACTIVITY */}
-      <RecentActivity
-        recentActivities={recentActivities}
-        formatDate={formatDate}
-      />
+        {/* RECENT ACTIVITY */}
+        <RecentActivity
+          recentActivities={recentActivities}
+          formatDate={formatDate}
+        />
+      </div>
     </div>
   );
 }
