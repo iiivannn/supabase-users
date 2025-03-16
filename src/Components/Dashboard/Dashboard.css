@@ -9,6 +9,14 @@ body {
   background-color: rgb(214, 213, 213);
 }
 
+/* PAGE LAYOUT */
+
+.page_layout {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+}
+
 /* NAVIGATION */
 
 .navigation {
@@ -182,27 +190,52 @@ body {
 
 .button_arrow_div:hover {
   cursor: pointer;
+  color: bis;
+}
+
+@keyframes arrowPulse {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 .right_arrow {
   width: 20px;
+  animation: arrowPulse 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+.view_orders {
+  margin: 0;
+  font-family: "Poppins";
+  font-weight: 400;
 }
 
 /* MIDDLE COMPONENTS */
 .middle_components {
   display: flex;
   flex-direction: column;
-
   width: 100%;
 }
 
 /* INPUT PARCEL */
 .input_feature {
-  height: max-content;
+  height: auto;
   width: 96%;
   background-color: #f9f2f2;
-  padding: 10px 15px;
+  padding: 10px 15px 30px;
   border-radius: 20px;
+  position: relative;
+}
+
+.add_title {
+  margin-top: 10px;
+  margin-bottom: 15px;
 }
 
 .input_wrapper {
@@ -210,7 +243,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 .input_name,
@@ -220,10 +253,50 @@ body {
   align-items: center;
 }
 
+.input_field {
+  margin: auto 10px;
+}
+
+.btn_box {
+  position: absolute;
+  right: 30px;
+  bottom: 15px;
+}
+
 .input_buttons {
   display: flex;
   justify-content: end;
-  gap: 10px;
+  gap: 20px;
+}
+
+.submit_btn,
+.clear_btn {
+  border: 2px black solid;
+  background-color: bisque;
+  width: 100px;
+  height: auto;
+  padding: 5px 15px;
+  border-radius: 10px;
+  font-family: "Poppins";
+  font-weight: 550;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.submit_btn:hover,
+.clear_btn:hover {
+  background-color: burlywood;
+  transform: scale(1.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.lower_box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.box_msg {
+  position: absolute;
 }
 
 /* ORDER TABLE */
@@ -252,17 +325,23 @@ body {
 }
 
 .title-refresh button {
-  padding: 6px 12px;
-  border: none;
+  padding: 6px 20px;
+  border: solid 2px #007bff;
   background-color: #007bff;
   color: white;
   cursor: pointer;
   border-radius: 4px;
   font-size: 0.9rem;
+  font-weight: 550;
+  border-radius: 10px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-family: "Poppins";
 }
 
 .title-refresh button:hover {
   background-color: #0056b3;
+  transform: scale(1.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 table {
@@ -301,8 +380,7 @@ tr:hover {
   padding: 0 20px;
   position: absolute;
   right: 25px;
-  height: 180px;
-  top: calc(200px + 30px);
+  top: calc(200px + 25px);
 }
 
 /* RECENT ACTIVITY */

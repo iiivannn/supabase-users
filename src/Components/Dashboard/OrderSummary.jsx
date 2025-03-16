@@ -21,7 +21,7 @@ export default function OrderSummary({ userName, today, weekly }) {
       <div className="my_orders">
         <button className="button_arrow" onClick={() => navigate("/orders")}>
           <div className="button_arrow_div">
-            View My Orders{" "}
+            <p className="view_orders">View My Orders</p>
             <img className="right_arrow" src={arrow} alt="Right Arrow" />
           </div>
         </button>

@@ -118,7 +118,8 @@ export default function Dashboard({ userName, onLogout }) {
       .from("user_order")
       .select("parcel_name, parcel_barcode, status, added_on, completed_at")
       .eq("username", user.user_metadata?.username || user.email)
-      .order("added_on", { ascending: false }) // Sort by added_on date
+      .eq("status", "completed") // Only get completed parcels
+      .order("completed_at", { ascending: false }) // Sort by completion date
       .limit(3);
 
     if (error) {
@@ -186,6 +187,16 @@ export default function Dashboard({ userName, onLogout }) {
       return;
     }
 
+    if (
+      !parcelBarcode ||
+      parcelBarcode.trim() === "" ||
+      !parcelName ||
+      parcelName.trim() === ""
+    ) {
+      setError("Incomplete Parcel Details.");
+      return;
+    }
+
     const { error: insertError } = await supabase.from("user_order").insert([
       {
         username: user.user_metadata?.username || user.email,
@@ -239,46 +250,48 @@ export default function Dashboard({ userName, onLogout }) {
 
   return (
     <div>
-      {/* NAVIGATION BAR */}
-      <div className="navbar">
-        <Navigation onLogout={onLogout} deviceId={deviceId} />
-      </div>
-
-      <div className="top_components">
-        {/* PARSAFE CARD */}
-        <ParsafeCard />
-
-        {/* ORDERS SUMMARY */}
-        <OrderSummary userName={userName} today={today} weekly={weekly} />
-      </div>
-
-      <div className="bottom_components">
-        <div className="middle_components">
-          {/* ADD BARCODE */}
-          <AddParcel
-            parcelName={parcelName}
-            setParcelName={setParcelName}
-            parcelBarcode={parcelBarcode}
-            setParcelBarcode={setParcelBarcode}
-            handleInsert={handleInsert}
-            handleClear={handleClear}
-            success={success}
-            error={error}
-          />
-
-          {/* ORDERS TABLE */}
-          <OrdersTable
-            topParcels={topParcels}
-            formatDate={formatDate}
-            handleRefresh={handleRefresh}
-          />
+      <div className="page_layout">
+        {/* NAVIGATION BAR */}
+        <div className="navbar">
+          <Navigation onLogout={onLogout} deviceId={deviceId} />
         </div>
 
-        {/* RECENT ACTIVITY */}
-        <RecentActivity
-          recentActivities={recentActivities}
-          formatDate={formatDate}
-        />
+        <div className="top_components">
+          {/* PARSAFE CARD */}
+          <ParsafeCard />
+
+          {/* ORDERS SUMMARY */}
+          <OrderSummary userName={userName} today={today} weekly={weekly} />
+        </div>
+
+        <div className="bottom_components">
+          <div className="middle_components">
+            {/* ADD BARCODE */}
+            <AddParcel
+              parcelName={parcelName}
+              setParcelName={setParcelName}
+              parcelBarcode={parcelBarcode}
+              setParcelBarcode={setParcelBarcode}
+              handleInsert={handleInsert}
+              handleClear={handleClear}
+              success={success}
+              error={error}
+            />
+
+            {/* ORDERS TABLE */}
+            <OrdersTable
+              topParcels={topParcels}
+              formatDate={formatDate}
+              handleRefresh={handleRefresh}
+            />
+          </div>
+
+          {/* RECENT ACTIVITY */}
+          <RecentActivity
+            recentActivities={recentActivities}
+            formatDate={formatDate}
+          />
+        </div>
       </div>
     </div>
   );

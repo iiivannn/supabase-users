@@ -6,7 +6,9 @@ export default function OrdersTable({ topParcels, formatDate, handleRefresh }) {
     <div className="show_orders">
       <div className="title-refresh">
         <h2>Recent Parcels</h2>
-        <button onClick={handleRefresh}>Refresh</button>
+        <button className="refresh_btn" onClick={handleRefresh}>
+          Refresh
+        </button>
       </div>
       <table>
         <thead>
@@ -15,7 +17,7 @@ export default function OrdersTable({ topParcels, formatDate, handleRefresh }) {
             <th>Parcel Barcode</th>
             <th>Status</th>
             <th>Date Added</th>
-            <th>Date Completed</th>
+            <th>Date Received</th>
           </tr>
         </thead>
         <tbody>
