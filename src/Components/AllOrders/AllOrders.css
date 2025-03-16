@@ -1,15 +1,77 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+/* Page layout */
+.page-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.nav-sidebar {
+  position: fixed;
+  width: 300px; /* Fixed width for nav sidebar */
+  height: 100vh;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.content-area {
+  flex: 1;
+  padding: 20px 50px 50px 50px;
+  margin-left: 250px;
+}
+
+/* Orders container */
 .orders_container {
-  padding: 20px;
   background: #f8f8f8;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  padding: 20px;
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .orders_container h2 {
   font-size: 1.5rem;
   color: #333;
-  margin-bottom: 10px;
+  margin: 0;
+}
+
+/* Sort buttons */
+.sort-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.sort-btn {
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  font-family: "Poppins";
+}
+
+.sort-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.sort-btn.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #0062cc;
+}
+
+/* Table styling */
+.table-container {
+  overflow-x: auto;
 }
 
 table {
@@ -28,12 +90,65 @@ td {
 th {
   background-color: #007bff;
   color: white;
+  position: sticky;
+  top: 0;
 }
 
 tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #f9f9f9;
 }
 
 tr:hover {
-  background-color: #e0e0e0;
+  background-color: #f1f1f1;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Error message */
+.error-message {
+  color: #dc3545;
+  padding: 10px;
+  background-color: #f8d7da;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .nav-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .content-area {
+    margin-left: 0;
+  }
+
+  .page-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .sort-buttons {
+    flex-direction: column;
+  }
 }
