@@ -43,6 +43,14 @@
   margin: 0;
 }
 
+.account-email {
+  /* background-color: #fff3cd;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: #671414; */
+  display: none;
+}
+
 /* Account section */
 .account_section {
   margin-bottom: 20px;
