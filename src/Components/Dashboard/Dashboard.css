@@ -178,19 +178,52 @@ body {
 .button_arrow {
   border: none;
   background-color: transparent;
+  padding: 0;
+  transition: transform 0.3s ease;
 }
 
 .button_arrow_div {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 500;
+  position: relative;
+  color: black; /* Warm brown that works well on beige */
 }
 
 .button_arrow_div:hover {
   cursor: pointer;
-  color: bis;
+  color: #8b4513; /* Saddle brown - darker on hover */
+}
+
+/* Remove the underline from the div */
+.button_arrow_div::after {
+  display: none;
+}
+
+/* Add the underline specifically to the p element */
+.view_orders {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  transition: color 0.3s ease;
+  position: relative; /* Need position relative for absolute positioning of pseudo-element */
+}
+
+.view_orders::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #8b4513; /* Brown underline */
+  transition: width 0.3s ease;
+}
+
+.button_arrow_div:hover .view_orders::after {
+  width: 100%;
 }
 
 @keyframes arrowPulse {
@@ -208,12 +241,12 @@ body {
 .right_arrow {
   width: 20px;
   animation: arrowPulse 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+  transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-.view_orders {
-  margin: 0;
-  font-family: "Poppins";
-  font-weight: 400;
+.button_arrow_div:hover .right_arrow {
+  transform: translateX(4px);
+  filter: brightness(0.8) sepia(0.6) hue-rotate(20deg); /* Makes the arrow brownish */
 }
 
 /* MIDDLE COMPONENTS */
@@ -255,6 +288,10 @@ body {
 
 .input_field {
   margin: auto 10px;
+  border: solid 2px black;
+  border-radius: 5px;
+  padding: 3px;
+  font-family: "Poppins";
 }
 
 .btn_box {
@@ -304,7 +341,7 @@ body {
 .show_orders {
   width: 95%;
   max-width: none;
-  margin: 20px 0;
+  margin: 15px 0;
   padding: 20px;
   background: #f8f8f8;
   border-radius: 8px;
