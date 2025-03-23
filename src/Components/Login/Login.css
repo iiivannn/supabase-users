@@ -1,75 +1,141 @@
-/* Login.css */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  font-family: "Poppins", sans-serif;
+  background-color: rgb(214, 213, 213);
+}
 
 .login-container {
   display: flex;
   min-height: 100vh;
-  background-color: #e6f0ff;
+  background-color: #272525;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 1rem;
+  padding-top: 0;
+  gap: 2rem;
+  scroll-behavior: smooth;
 }
 
-/* Left section styles (60%) */
+.logo-img {
+  width: 250px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Left section styles */
 .login-form-section {
-  width: 60%;
-  padding: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  max-width: 450px;
 }
 
 .login-form-container {
-  background-color: #fff;
-  padding: 2rem;
+  background-color: #f8f0f0;
+  padding: 1.5rem;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 28rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  width: auto;
 }
 
 .login-title {
-  font-size: 1.5rem;
+  font-size: clamp(1.5rem, 3.5vw, 1.25rem);
   font-weight: 700;
+  margin-top: 0;
   margin-bottom: 1.5rem;
   text-align: center;
   color: #1f2937;
 }
 
-/* Right section styles (40%) */
-.device-section {
-  width: 40%;
-  background-color: #cce0ff;
-  padding: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.device-container {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 20rem;
-}
-
 .device-title {
-  font-size: 1.25rem;
+  font-size: clamp(1.1rem, 3.5vw, 1.25rem);
   font-weight: 700;
+  margin-top: 1.5rem;
   margin-bottom: 1rem;
   text-align: center;
   color: #1f2937;
+}
+
+.device-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .device-info {
   font-size: 0.875rem;
   color: #4b5563;
   margin-top: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .device-actions {
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Right section styles */
+.info-section {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-headings {
+  margin-bottom: 1rem;
+  width: 100%;
+  border-radius: 0.5rem;
+}
+
+.login-image-section {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-image {
+  width: 100%;
+  height: 100%;
+  max-height: 250px;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.info-texts {
+  text-align: end;
+  width: 100%;
+}
+
+.signup-texts {
+  text-align: start;
+  width: 100%;
+}
+
+.info-main-text {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: white;
+  line-height: 1.2;
+}
+
+.info-sub-text {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  color: #d1d5db;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
 }
 
 /* Form elements */
@@ -87,18 +153,20 @@
 
 .form-input {
   width: -webkit-fill-available;
-  padding: 0.5rem 0.75rem;
+  padding: 0.625rem 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 0.25rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   appearance: none;
   color: #1f2937;
+  background-color: white;
+  font-family: "Poppins";
 }
 
 .form-input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(255, 79, 79, 0.3);
+  border-color: #ff4f4f;
 }
 
 /* Select wrapper for better styling */
@@ -119,47 +187,51 @@
 
 .select-wrapper select {
   padding-right: 2rem;
-  background-color: #f0f7ff;
-  border: 1px solid #90b8ed;
+  background-color: white;
+  border: 1px solid #d1d5db;
   cursor: pointer;
 }
 
 /* Buttons */
 .login-button {
   width: 100%;
-  background-color: #3b82f6;
+  background-color: #ff4f4f;
   color: white;
-  font-weight: 700;
-  padding: 0.5rem 1rem;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
   border-radius: 0.25rem;
   cursor: pointer;
   border: none;
   transition: background-color 0.2s;
+  margin-top: 0.5rem;
+  font-family: "Poppins";
+  font-size: 1rem;
 }
 
 .login-button:hover:not(:disabled) {
-  background-color: #2563eb;
+  background-color: #e63e3e;
 }
 
 .login-button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 79, 79, 0.3);
 }
 
 .secondary-button {
-  width: 100%;
-  background-color: #dbeafe;
-  color: #1e40af;
+  background-color: rgba(255, 79, 79, 0.1);
+  color: #ff4f4f;
   font-weight: 600;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 0.25rem;
   cursor: pointer;
-  border: 1px solid #93c5fd;
+  border: 1px solid rgba(255, 79, 79, 0.3);
   transition: all 0.2s;
+  font-size: 0.875rem;
+  white-space: nowrap;
 }
 
 .secondary-button:hover:not(:disabled) {
-  background-color: #bfdbfe;
+  background-color: rgba(255, 79, 79, 0.2);
 }
 
 .cancel-button {
@@ -191,6 +263,7 @@ button:disabled,
   padding: 0.75rem 1rem;
   border-radius: 0.25rem;
   margin-bottom: 1rem;
+  font-size: 0.875rem;
 }
 
 .success-message {
@@ -201,6 +274,7 @@ button:disabled,
   border-radius: 0.25rem;
   margin-bottom: 1rem;
   text-align: center;
+  font-size: 0.875rem;
 }
 
 /* Sign up link */
@@ -214,12 +288,127 @@ button:disabled,
 }
 
 .signup-action {
-  color: #2563eb;
+  color: #ff4f4f;
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .signup-action:hover:not(.disabled) {
-  color: #1d4ed8;
+  color: #e63e3e;
   text-decoration: underline;
+}
+
+/* Enhanced responsive adjustments */
+@media (min-width: 1080px) {
+  .device-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .device-info {
+    flex: 1;
+    margin-right: 1rem;
+  }
+}
+
+/* Medium screens (tablets, small laptops) */
+@media (max-width: 1080px) {
+  .login-container {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 2rem;
+  }
+
+  .login-form-section,
+  .info-section {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .info-texts {
+    text-align: center;
+  }
+
+  .login-form-container {
+    margin-top: 1rem;
+  }
+
+  .info-section {
+    padding-bottom: 2rem;
+  }
+}
+
+/* Small screens (phones) */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 1.5rem;
+    overflow-x: hidden;
+  }
+
+  .login-form-container {
+    padding: 1rem;
+  }
+
+  .device-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .device-actions button {
+    width: 100%;
+  }
+
+  .login-image-section {
+    max-height: 180px;
+  }
+
+  .info-section {
+    padding-bottom: 3rem;
+  }
+}
+
+/* iPhone-specific adjustments */
+@media screen and (max-width: 415px) {
+  /* iPhone 11 Pro Max (414px) and below */
+
+  .info-texts {
+    padding: 0 0.5rem;
+  }
+  .info-section {
+    padding-bottom: 5rem;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  /* iPhone 11 Pro (375px) and below */
+  .form-label {
+    font-size: 0.8rem;
+  }
+
+  .info-main-text {
+    font-size: clamp(1.3rem, 4.5vw, 2rem);
+  }
+}
+
+@media screen and (max-width: 320px) {
+  /* Small phones */
+  .login-form-container {
+    padding: 0.75rem;
+  }
+}
+
+/* Large screens */
+@media screen and (min-width: 1200px) {
+  .login-container {
+    gap: 4rem;
+  }
+
+  .login-form-section {
+    max-width: 480px;
+  }
+
+  .info-section {
+    max-width: 550px;
+  }
 }

@@ -2,6 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabase";
 import "./Login.css";
+import Carousel from "../Carousel/Carousel";
+
+import logo from "../../assets/parsafe_logo.png";
+import img1 from "../../assets/parcel1.jpg";
+import img2 from "../../assets/parcel2.jpg";
+import img3 from "../../assets/parcel3.jpg";
+import img4 from "../../assets/parcel4.jpg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,6 +20,8 @@ export default function Login() {
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  const carouselImages = [img1, img2, img3, img4];
 
   // Fetch available device IDs on component mount
   useEffect(() => {
@@ -194,13 +203,13 @@ export default function Login() {
 
   return (
     <div className="login-container">
-      {/* Left section (60%) - Login form */}
+      {/* Login form section */}
       <div className="login-form-section">
         <div className="login-form-container">
+          <img src={logo} className="logo-img" alt="ParSafe-Logo" />
           <h2 className="login-title">Account Login</h2>
 
           {error && <div className="error-message">{error}</div>}
-
           {successMessage && (
             <div className="success-message">{successMessage}</div>
           )}
@@ -235,29 +244,6 @@ export default function Login() {
             />
           </div>
 
-          <button
-            onClick={handleLogin}
-            className="login-button"
-            disabled={isLoading}
-          >
-            {isLoading ? "Processing..." : "Login"}
-          </button>
-
-          <div className="signup-link">
-            <span className="signup-text">Don't have an account? </span>
-            <span
-              onClick={() => !isLoading && navigate("/signup")}
-              className={`signup-action ${isLoading ? "disabled" : ""}`}
-            >
-              Sign up
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Right section (40%) - Device ID */}
-      <div className="device-section">
-        <div className="device-container">
           <h2 className="device-title">Device Selection</h2>
 
           {!isAddingNewDevice ? (
@@ -283,17 +269,19 @@ export default function Login() {
                 </div>
               </div>
 
-              <div className="device-info">
-                These are unassigned devices available for registration.
-              </div>
+              <div className="device-footer">
+                <div className="device-info">
+                  These are unassigned devices available for registration.
+                </div>
 
-              <button
-                onClick={() => handleAddNewDevice()}
-                className="secondary-button"
-                disabled={isLoading}
-              >
-                {isLoading ? "Adding..." : "Add New Device"}
-              </button>
+                <button
+                  onClick={() => handleAddNewDevice()}
+                  className="secondary-button"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Adding..." : "Add New Device"}
+                </button>
+              </div>
             </>
           ) : (
             <>
@@ -315,9 +303,7 @@ export default function Login() {
                   {isLoading ? "Adding..." : "Add Device"}
                 </button>
                 <button
-                  onClick={() => {
-                    setIsAddingNewDevice(false);
-                  }}
+                  onClick={() => setIsAddingNewDevice(false)}
                   className="cancel-button"
                   disabled={isLoading}
                 >
@@ -326,6 +312,39 @@ export default function Login() {
               </div>
             </>
           )}
+
+          <button
+            onClick={handleLogin}
+            className="login-button"
+            disabled={isLoading}
+          >
+            {isLoading ? "Processing..." : "Login"}
+          </button>
+
+          <div className="signup-link">
+            <span className="signup-text">Don't have an account? </span>
+            <span
+              onClick={() => !isLoading && navigate("/signup")}
+              className={`signup-action ${isLoading ? "disabled" : ""}`}
+            >
+              Sign up
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Info section with image - no container, just floating text and image */}
+      <div className="info-section">
+        <div className="info-headings">
+          <div className="info-texts">
+            <p className="info-sub-text">A Smart Parcel Receiver</p>
+            <h2 className="info-main-text">
+              Receiving Your Orders One Parcel At A Time
+            </h2>
+          </div>
+        </div>
+        <div className="login-image-section">
+          <Carousel images={carouselImages} interval={5000} />
         </div>
       </div>
     </div>
