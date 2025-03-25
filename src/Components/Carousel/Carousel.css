@@ -14,7 +14,6 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  /* Use a simple fade transition instead of complex animation */
   transition: opacity 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 

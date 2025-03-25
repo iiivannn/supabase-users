@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
 import Navigation from "../Dashboard/Navigation";
+import menu from "../../assets/more.png";
 import "./Account.css";
 
 export default function Account({ onLogout }) {
@@ -17,6 +18,11 @@ export default function Account({ onLogout }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const handleMenuToggle = () => {
+    setIsMenuActive((prevState) => !prevState);
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -175,12 +181,21 @@ export default function Account({ onLogout }) {
   };
 
   return (
-    <div className="page-container">
-      <div className="nav-sidebar">
+    <div className="page_layout">
+      {/* NAVIGATION BAR */}
+      <div className={`nav${isMenuActive ? "-active" : ""}`}>
         <Navigation onLogout={onLogout} />
       </div>
+      <button
+        className="menu_btn"
+        onClick={handleMenuToggle}
+        aria-label="Toggle Navigation Menu"
+      >
+        <img className="menu_img" src={menu} alt="Menu" />
+      </button>
 
-      <div className="content-area">
+      {/* MAIN CONTENT */}
+      <div className="main_content">
         <div className="account_container">
           <div className="account-header">
             <h2>Account Settings</h2>

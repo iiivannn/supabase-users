@@ -7,6 +7,8 @@ import AddParcel from "./AddParcel";
 import ParsafeCard from "./ParsafeCard";
 import OrderSummary from "./OrderSummary";
 
+import menu from "../../assets/more.png";
+
 import "./Dashboard.css";
 
 export default function Dashboard({ userName, onLogout }) {
@@ -19,6 +21,11 @@ export default function Dashboard({ userName, onLogout }) {
   const [topParcels, setTopParcels] = useState([]);
   const [recentActivities, setRecentActivities] = useState([]);
   const [deviceId, setDeviceId] = useState("");
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const handleMenuToggle = () => {
+    setIsMenuActive((prevState) => !prevState);
+  };
 
   // Fetch the device ID of the logged-in user
   const getDeviceId = async () => {
@@ -252,9 +259,16 @@ export default function Dashboard({ userName, onLogout }) {
     <div>
       <div className="page_layout">
         {/* NAVIGATION BAR */}
-        <div className="navbar">
+        <div className={`nav${isMenuActive ? "-active" : ""}`}>
           <Navigation onLogout={onLogout} deviceId={deviceId} />
         </div>
+        <button
+          className="menu_btn"
+          onClick={handleMenuToggle}
+          aria-label="Toggle Navigation Menu"
+        >
+          <img className="menu_img" src={menu} alt="Menu" />
+        </button>
 
         <div className="top_components">
           {/* PARSAFE CARD */}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../../supabase";
 import Navigation from "../Dashboard/Navigation";
+import menu from "../../assets/more.png";
 import "./AllOrders.css";
 
 export default function AllOrders({ onLogout }) {
@@ -8,6 +9,11 @@ export default function AllOrders({ onLogout }) {
   const [error, setError] = useState("");
   const [sortField, setSortField] = useState("completed_at");
   const [sortDirection, setSortDirection] = useState(true); // false = descending
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const handleMenuToggle = () => {
+    setIsMenuActive((prevState) => !prevState);
+  };
 
   const fetchOrders = useCallback(
     async (field = sortField, ascending = sortDirection) => {
@@ -61,12 +67,21 @@ export default function AllOrders({ onLogout }) {
   };
 
   return (
-    <div className="page-container">
-      <div className="nav-sidebar">
+    <div className="page_layout">
+      {/* NAVIGATION BAR */}
+      <div className={`nav${isMenuActive ? "-active" : ""}`}>
         <Navigation onLogout={onLogout} />
       </div>
+      <button
+        className="menu_btn"
+        onClick={handleMenuToggle}
+        aria-label="Toggle Navigation Menu"
+      >
+        <img className="menu_img" src={menu} alt="Menu" />
+      </button>
 
-      <div className="content-area">
+      {/* MAIN CONTENT */}
+      <div className="main_content">
         <div className="orders_container">
           <div className="orders-header">
             <h2>All Orders</h2>

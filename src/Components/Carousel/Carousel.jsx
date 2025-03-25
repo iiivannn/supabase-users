@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./Carousel.css";
 
-export default function Carousel({ images, interval }) {
+export default function Carousel({ images, interval = 5000 }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
