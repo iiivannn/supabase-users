@@ -14,10 +14,15 @@ export default function Navigation({ onLogout, deviceId }) {
       } = await supabase.auth.getUser();
 
       if (user) {
-        // Step 2: Update the `unit_devices` table to set `user_id` and `username` to null
+        // Step 2: Update the `unit_devices` table to set `user_id`, `username` to null, and `isOccupied` to false
         const { error: updateError } = await supabase
           .from("unit_devices")
-          .update({ user_id: null, username: null, isLogout: true })
+          .update({
+            user_id: null,
+            username: null,
+            isLogout: true,
+            isOccupied: false,
+          })
           .eq("device_id", deviceId);
 
         if (updateError) {
