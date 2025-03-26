@@ -13,7 +13,7 @@ body {
 
 .page_layout {
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1fr 3.5fr;
   align-items: center;
 }
 
@@ -35,6 +35,7 @@ body {
   padding: 15px;
 
   position: fixed;
+  top: 0;
 }
 
 .logo_img {
@@ -173,7 +174,7 @@ body {
   position: absolute;
   top: 5px;
   right: 30px;
-  width: 95px;
+  width: 80px;
 }
 
 .button_arrow {
@@ -481,6 +482,14 @@ tr:hover {
   margin: 5px 0;
 }
 
+.menu_btn {
+  display: none;
+}
+
+.menu_img {
+  display: none;
+}
+
 @media screen and (max-width: 1250px) {
   .page_layout {
     grid-template-columns: 1fr;
@@ -577,62 +586,126 @@ tr:hover {
   }
 }
 
-@media screen and (max-width: 1240px) {
-  .stats_img {
+@media screen and (min-width: 690px) and (max-width: 1250px) {
+  .navigation {
+    display: block;
+    position: fixed;
+    background-color: transparent;
+    height: auto;
+    top: 0;
+  }
+
+  .top_components {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    width: calc(100% - 10vw);
+    padding: 0 20px;
     position: absolute;
-    top: 20%;
-    right: 25%;
-    width: 100px;
+    right: 4vw;
+    height: 180px;
+    top: 1vh;
   }
 
-  .recent_activity {
-    position: relative;
-    top: -30px;
+  .card_img_container {
+    height: 20vh;
+    width: 100% !important;
   }
-}
 
-@media screen and (max-width: 1010px) {
-  .stats_img {
-    position: absolute;
-    top: 20%;
-    right: 25%;
-    width: 100px;
+  .summary_dashboard {
+    width: 100% !important;
+    height: 85%;
+    top: 0 !important;
+    margin: 0;
+    padding: 0 10px;
+    display: flex;
+    align-items: flex-start;
   }
-}
 
-@media screen and (max-width: 970px) {
-  .stats_img {
-    position: absolute;
-    top: 20%;
-    right: 15%;
-    width: 100px;
-  }
-  .show_orders {
-    padding: 20px 10px;
-  }
-  .recent_activity {
-    position: relative;
-    top: -30px;
-    width: 93%;
-  }
-}
-
-@media screen and (max-width: 690px) {
   .stats_img {
     display: none;
   }
+
+  .bottom_components {
+    width: 100vw;
+    margin: 23vh 0vw 0;
+  }
+
+  .middle_components {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .input_feature,
   .show_orders {
-    padding: 20px 5px;
+    width: 85% !important;
+    padding-right: 15px;
   }
 
   .recent_activity {
-    position: relative;
-    top: -25px;
-    width: 91%;
+    width: 84% !important;
+  }
+
+  .menu_btn {
+    position: fixed;
+    top: 14px;
+    left: 10px;
+    background-color: rgba(128, 128, 128, 0.98);
+    border: none;
+    border-radius: 50%;
+    z-index: 1001;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .menu_img {
+    width: 20px;
+    display: block;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: lightgray;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: -100vw;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.647, 0.9, 0.745, 0.315);
+  }
+
+  .nav-active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: lightgray;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.2, 0.4, 0.6, 0.4);
   }
 }
 
-@media screen and (max-width: 376px) {
+@media screen and (min-width: 431px) and (max-width: 690px) {
   .navigation {
     display: block;
     position: fixed;
@@ -641,7 +714,7 @@ tr:hover {
     top: 0;
   }
   .card_img_container {
-    width: 345px;
+    width: 94vw !important;
   }
   .card_text h2 {
     font-size: 1.1rem;
@@ -656,7 +729,7 @@ tr:hover {
   }
 
   .summary_dashboard {
-    width: 310px;
+    width: 88vw !important;
     display: flex;
     align-items: flex-start;
     position: relative;
@@ -665,35 +738,35 @@ tr:hover {
   }
   .stats_img {
     position: absolute;
-    top: -1px;
-    right: 15px;
-    width: 80px;
+    top: -1px !important;
+    right: 15px !important;
+    width: 90px !important;
   }
   .input_feature {
     position: relative;
     top: -10px;
     left: -20px;
-    width: 325px;
+    width: 90vw !important;
   }
   .input_wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: center !important;
+    align-items: center !important;
   }
   .lower_box {
     position: absolute;
-    top: 210px;
-    left: 355px;
+    top: 18vh !important;
+    left: 89vw !important;
   }
 
   .show_orders {
     display: block;
-    width: 82%;
+    width: 88vw !important;
     position: relative;
     top: -5px;
     padding: 10px 12px;
-    left: -18px;
+    left: -3vw;
   }
 
   .title-refresh button {
@@ -711,6 +784,312 @@ tr:hover {
   td {
     font-size: 0.8rem;
     padding: 4px;
+  }
+
+  .recent_activity {
+    width: 92vw !important;
+    position: relative;
+    padding: 10px 0;
+    top: -40px;
+    left: -3vw;
+  }
+  .recent_activity h2 {
+    padding-left: 10px;
+  }
+
+  .activity_contents {
+    width: 95%;
+    display: block;
+    margin: 0px auto;
+  }
+
+  .menu_btn {
+    position: fixed;
+    top: 14px;
+    left: 10px;
+    background-color: rgba(128, 128, 128, 0.98);
+    border: none;
+    border-radius: 50%;
+    z-index: 1001;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .menu_img {
+    width: 20px;
+    display: block;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: lightgray;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: -100vw;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.647, 0.9, 0.745, 0.315);
+  }
+
+  .nav-active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: lightgray;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.2, 0.4, 0.6, 0.4);
+  }
+}
+
+@media screen and (min-width: 343px) and (max-width: 379px) {
+  .navigation {
+    display: block;
+    position: fixed;
+    background-color: transparent;
+    height: auto;
+    top: 0;
+  }
+  .card_img_container {
+    width: 93vw;
+  }
+  .card_text h2 {
+    font-size: 1.1rem;
+    position: relative;
+    left: -10px;
+  }
+
+  .card_text p {
+    font-size: 0.8rem;
+    position: relative;
+    left: -10px;
+  }
+
+  .summary_dashboard {
+    width: 84vw;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    top: -25px;
+    left: -20px;
+  }
+  .stats_img {
+    position: absolute;
+    top: -1px;
+    right: 15px;
+    width: 80px;
+  }
+  .input_feature {
+    position: relative;
+    top: -10px;
+    left: -20px;
+    width: 87vw;
+  }
+  .input_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .lower_box {
+    position: absolute;
+    top: 220px;
+    left: 96vw;
+  }
+
+  .show_orders {
+    display: block;
+    width: 84vw;
+    position: relative;
+    top: -5px;
+    padding: 10px 12px;
+    left: -6vw;
+  }
+
+  .title-refresh button {
+    padding: 5px;
+    font-size: 0.8rem;
+    position: relative;
+    right: 2px;
+  }
+
+  th {
+    font-size: 0.9rem;
+    padding: 4px;
+  }
+
+  td {
+    font-size: 0.8rem;
+    padding: 4px;
+  }
+
+  .recent_activity {
+    width: 90vw;
+    position: relative;
+    padding: 10px 0;
+    top: -40px;
+    left: -6vw;
+  }
+  .recent_activity h2 {
+    padding-left: 10px;
+  }
+
+  .activity_contents {
+    width: 95%;
+    display: block;
+    margin: 0px auto;
+  }
+
+  .menu_btn {
+    position: fixed;
+    top: 14px;
+    left: 10px;
+    background-color: rgba(128, 128, 128, 0.98);
+    border: none;
+    border-radius: 50%;
+    z-index: 1001;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .menu_img {
+    width: 20px;
+    display: block;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: lightgray;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: -100vw;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.647, 0.9, 0.745, 0.315);
+  }
+
+  .nav-active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: lightgray;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.2, 0.4, 0.6, 0.4);
+  }
+}
+
+@media screen and (min-width: 379px) and (max-width: 390px) {
+  .navigation {
+    display: block;
+    position: fixed;
+    background-color: transparent;
+    height: auto;
+    top: 0;
+  }
+  .card_img_container {
+    width: 360px;
+  }
+  .card_text h2 {
+    font-size: 1.1rem;
+    position: relative;
+    left: -10px;
+  }
+
+  .card_text p {
+    font-size: 0.8rem;
+    position: relative;
+    left: -10px;
+  }
+
+  .summary_dashboard {
+    width: 330px;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    top: -25px;
+    left: -20px;
+  }
+  .stats_img {
+    position: absolute;
+    top: -1px;
+    right: 15px;
+    width: 80px;
+  }
+  .input_feature {
+    position: relative;
+    top: -10px;
+    left: -20px;
+    width: 340px;
+  }
+  .input_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .lower_box {
+    position: absolute;
+    top: 220px;
+    left: 355px;
+  }
+
+  .show_orders {
+    display: block;
+    width: 80%;
+    position: relative;
+    top: -5px;
+    padding: 10px 12px;
+    left: -20px;
+  }
+
+  .title-refresh button {
+    padding: 5px;
+    font-size: 0.8rem;
+    position: relative;
+    right: 2px;
+  }
+
+  th {
+    font-size: 0.85rem;
+    padding: 4px !important;
+  }
+
+  td {
+    font-size: 0.75rem;
+    padding: 4px !important;
   }
 
   .recent_activity {
@@ -761,7 +1140,165 @@ tr:hover {
     z-index: 999;
     position: fixed;
     top: 0;
-    left: -500px;
+    left: -100vw;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.647, 0.9, 0.745, 0.315);
+  }
+
+  .nav-active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: lightgray;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.2, 0.4, 0.6, 0.4);
+  }
+}
+
+@media screen and (min-width: 390px) and (max-width: 431px) {
+  .navigation {
+    display: block;
+    position: fixed;
+    background-color: transparent;
+    height: auto;
+    top: 0;
+  }
+  .card_img_container {
+    width: 93vw;
+  }
+  .card_text h2 {
+    font-size: 1.1rem;
+    position: relative;
+    left: -10px;
+  }
+
+  .card_text p {
+    font-size: 0.8rem;
+    position: relative;
+    left: -10px;
+  }
+
+  .summary_dashboard {
+    width: 85vw;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    top: -25px;
+    left: -20px;
+  }
+  .stats_img {
+    position: absolute;
+    top: -1px;
+    right: 15px;
+    width: 90px;
+  }
+  .input_feature {
+    position: relative;
+    top: -10px;
+    left: -20px;
+    width: 88vw;
+  }
+  .input_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .btn_box {
+    position: absolute;
+    right: -10x !important;
+    bottom: 10px !important;
+  }
+  .lower_box {
+    position: absolute;
+    top: 210px;
+    left: 355px;
+  }
+
+  .show_orders {
+    display: block;
+    width: 80%;
+    position: relative;
+    top: -5px;
+    padding: 10px 12px;
+    left: -20px;
+  }
+
+  .title-refresh button {
+    padding: 5px;
+    font-size: 0.8rem;
+    position: relative;
+    right: 2px;
+  }
+
+  th {
+    font-size: 0.85rem;
+    padding: 4px !important;
+  }
+
+  td {
+    font-size: 0.75rem;
+    padding: 4px !important;
+  }
+
+  .recent_activity {
+    width: 90vw;
+    position: relative;
+    padding: 10px 0;
+    top: -40px;
+    left: -20px;
+  }
+  .recent_activity h2 {
+    padding-left: 10px;
+  }
+
+  .activity_contents {
+    width: 95%;
+    display: block;
+    margin: 0px auto;
+  }
+
+  .menu_btn {
+    position: fixed;
+    top: 14px;
+    left: 10px;
+    background-color: rgba(128, 128, 128, 0.98);
+    border: none;
+    border-radius: 50%;
+    z-index: 1001;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .menu_img {
+    width: 20px;
+    display: block;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: lightgray;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: -100vw;
     padding: 0;
     margin: 0;
     transition: all 0.3s cubic-bezier(0.647, 0.9, 0.745, 0.315);
