@@ -175,7 +175,12 @@ export default function Login() {
       // Update the device with the user's information
       const { error: updateError } = await supabase
         .from("unit_devices")
-        .update({ user_id: userUuid, username: username, isLogout: false })
+        .update({
+          user_id: userUuid,
+          username: username,
+          isLogout: false,
+          isOccupied: true,
+        })
         .eq("device_id", deviceId);
 
       if (updateError) {

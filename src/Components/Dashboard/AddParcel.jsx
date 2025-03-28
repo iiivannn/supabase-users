@@ -1,5 +1,5 @@
-import React from "react";
 import "./Dashboard.css";
+import help from "../../assets/question-mark.png";
 
 export default function AddParcel({
   parcelName,
@@ -10,10 +10,57 @@ export default function AddParcel({
   handleClear,
   success,
   error,
+  setShowModal, // New prop to update modal state in parent
+  showModal, // New prop to track modal state
 }) {
+  // Function to toggle modal
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
   return (
     <div className="input_feature">
-      <h2 className="add_title">Add Parcel Details</h2>
+      <div className="title-wrapper">
+        <h2 className="add_title">Add Parcel Details</h2>
+        <img
+          className="question-mark"
+          src={help}
+          alt="Barcode Instructions"
+          onClick={toggleModal}
+          style={{ cursor: "pointer" }}
+        />
+      </div>
+
+      {/* Modal remains the same as in previous implementation */}
+      {showModal && (
+        <div className="modal-overlay" onClick={toggleModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={toggleModal}>
+              ×
+            </button>
+            <h3>Have a Parcel?</h3>
+            <p>Here are some guidelines for entering parcel details:</p>
+            <ul>
+              <li>
+                Enter the{" "}
+                <p className="colored-text-check">shipping information</p>.
+              </li>
+              <li>
+                Do not enter the{" "}
+                <p className="colored-text-uncheck">Order ID</p>.
+              </li>
+              <li>You may enter any name for your parcel.</li>
+            </ul>
+            <div className="modal-buttons">
+              <button className="modal-close-btn" onClick={toggleModal}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rest of the component remains the same */}
       <div className="input_wrapper">
         <div className="input_name">
           <label htmlFor="parcel_name">Parcel Name: </label>

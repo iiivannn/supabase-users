@@ -22,6 +22,7 @@ export default function Dashboard({ userName, onLogout }) {
   const [recentActivities, setRecentActivities] = useState([]);
   const [deviceId, setDeviceId] = useState("");
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleMenuToggle = () => {
     setIsMenuActive((prevState) => !prevState);
@@ -153,7 +154,7 @@ export default function Dashboard({ userName, onLogout }) {
       .select("parcel_name, status, added_on, completed_at")
       .eq("username", user.user_metadata?.username || user.email)
       .order("added_on", { ascending: false })
-      .limit(3);
+      .limit(8);
 
     if (error) {
       console.error("Error fetching recent activities:", error);
@@ -266,6 +267,8 @@ export default function Dashboard({ userName, onLogout }) {
           className="menu_btn"
           onClick={handleMenuToggle}
           aria-label="Toggle Navigation Menu"
+          disabled={showModal} // Disable the menu button when modal is open
+          style={{ pointerEvents: showModal ? "none" : "auto" }} // Additional visual indicator
         >
           <img className="menu_img" src={menu} alt="Menu" />
         </button>
@@ -290,6 +293,8 @@ export default function Dashboard({ userName, onLogout }) {
               handleClear={handleClear}
               success={success}
               error={error}
+              showModal={showModal}
+              setShowModal={setShowModal}
             />
 
             {/* ORDERS TABLE */}
