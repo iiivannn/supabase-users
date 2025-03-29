@@ -8,14 +8,30 @@ export default function Navigation({ onLogout, deviceId }) {
 
   const handleLogout = async () => {
     try {
+      // Debug logs to trace values
+      console.log("Logout initiated with deviceId:", deviceId);
+
       // Step 1: Get the current user
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser();
 
-      if (user) {
-        // Step 2: Update the `unit_devices` table to set `user_id`, `username` to null, and `isOccupied` to false
-        const { error: updateError } = await supabase
+      if (userError) {
+        console.error("Error fetching user during logout:", userError);
+        // Continue with logout even if we can't get the user
+      }
+
+      // Step 2: Update the device record if we have both user and deviceId
+      if (user && deviceId) {
+        console.log(
+          "Attempting to update device:",
+          deviceId,
+          "for user:",
+          user.id
+        );
+
+        const { error: updateError, data: updateResult } = await supabase
           .from("unit_devices")
           .update({
             user_id: null,
@@ -27,14 +43,18 @@ export default function Navigation({ onLogout, deviceId }) {
 
         if (updateError) {
           console.error("Error updating device:", updateError);
-          alert("Error updating device. Please try again.");
-          return;
+          // Don't return - continue with logout even if update fails
+        } else {
+          console.log("Device update result:", updateResult);
         }
-
-        console.log(`User logged out: ${user.user_metadata.username}`);
+      } else {
+        console.warn("Missing user or deviceId for device update:", {
+          hasUser: !!user,
+          deviceId,
+        });
       }
 
-      // Step 3: Sign out the user from Supabase Auth
+      // Step 3: Sign out from Supabase Auth
       const { error: signOutError } = await supabase.auth.signOut();
 
       if (signOutError) {
@@ -43,10 +63,14 @@ export default function Navigation({ onLogout, deviceId }) {
         return;
       }
 
-      // Step 4: Call the `onLogout` method passed from the parent component
-      await onLogout();
+      // Step 4: Call the parent's onLogout function if it exists
+      if (typeof onLogout === "function") {
+        await onLogout();
+      } else {
+        console.warn("onLogout function is not defined");
+      }
 
-      // Step 5: Navigate to the login page
+      // Step 5: Navigate to login page
       navigate("/login");
     } catch (err) {
       console.error("Unexpected error during logout:", err);
