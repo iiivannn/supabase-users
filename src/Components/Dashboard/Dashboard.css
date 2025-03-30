@@ -391,10 +391,13 @@ body {
   font-family: "Poppins";
 }
 
+/* Update the .btn_box class to be properly positioned */
 .btn_box {
-  position: absolute;
-  right: 30px;
-  bottom: 15px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 20px;
+  padding-right: 10px;
 }
 
 .input_buttons {
@@ -423,10 +426,14 @@ body {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* Replace the existing .lower_box class with this updated version */
 .lower_box {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  position: relative; /* Change from absolute to relative */
+  margin-top: 10px; /* Add some margin instead of absolute positioning */
 }
 
 .box_msg {
@@ -699,7 +706,7 @@ tr:hover {
     width: calc(100% - 10vw);
     padding: 0 20px;
     position: absolute;
-    right: 4vw;
+    right: 3vw;
     height: 180px;
     top: 1vh;
   }
@@ -711,12 +718,63 @@ tr:hover {
 
   .summary_dashboard {
     width: 100% !important;
-    height: 85%;
+    height: 20vh; /* Same height as card_img_container */
     top: 0 !important;
     margin: 0;
-    padding: 0 10px;
+    padding: 0; /* Remove padding from container */
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+
+    box-sizing: border-box; /* Ensure padding doesn't affect overall size */
+  }
+
+  .summary_dashboard_wrapper {
+    height: calc(
+      100% - 10px
+    ); /* Subtract total padding (5px top + 5px bottom) */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px 10px; /* Add padding here instead (5px top/bottom, 10px left/right) */
+    box-sizing: border-box;
+  }
+
+  /* Reduce space between summary_stats and button_arrow_div */
+  .summary_stats {
+    gap: 15px;
+    height: 65px;
+  }
+
+  .button_arrow_div {
+    margin-top: 3px; /* Reduce margin to lessen distance */
+  }
+
+  .view_orders {
+    font-size: 0.85rem;
+  }
+
+  .right_arrow {
+    width: 15px;
+  }
+
+  /* Other adjustments for compact display */
+  .welcome_title {
+    font-size: 1rem;
+    margin: 3px 0;
+  }
+
+  .summary_today h4,
+  .summary_weekly h4 {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+
+  .summary_today p,
+  .summary_weekly p {
+    font-size: 0.8rem;
+    margin: 0;
   }
 
   .stats_img {
@@ -747,22 +805,58 @@ tr:hover {
 
   .menu_btn {
     position: fixed;
-    top: 14px;
-    left: 10px;
-    background-color: rgba(128, 128, 128, 0.98);
+    top: 20px;
+    left: 20px;
+    background-color: #fff;
     border: none;
     border-radius: 50%;
     z-index: 1001;
-    padding: 6px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+
+  .menu_btn::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 222, 173, 0.5); /* Soft bisque color */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    transition: width 0.4s ease, height 0.4s ease;
+  }
+
+  .menu_btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu_btn:hover::before {
+    width: 150%;
+    height: 150%;
+  }
+
+  .menu_btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   .menu_img {
-    width: 20px;
+    width: 24px;
+    height: 24px;
     display: block;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
   }
 
   .nav {
@@ -837,12 +931,7 @@ tr:hover {
     right: 15px !important;
     width: 90px !important;
   }
-  .input_feature {
-    position: relative;
-    top: -10px;
-    left: -20px;
-    width: 90vw !important;
-  }
+
   .input_wrapper {
     display: flex;
     flex-direction: column;
@@ -863,10 +952,15 @@ tr:hover {
     font-size: 0.9rem;
   }
 
-  .lower_box {
-    position: absolute;
-    top: 25vh !important;
-    left: 95vw !important;
+  .input_feature {
+    width: 85% !important;
+    left: -20px;
+  }
+
+  .btn_box {
+    right: 15px;
+    bottom: 10px;
+    padding-right: 10px;
   }
 
   .show_orders {
@@ -914,24 +1008,59 @@ tr:hover {
 
   .menu_btn {
     position: fixed;
-    top: 14px;
-    left: 10px;
-    background-color: rgba(128, 128, 128, 0.98);
+    top: 20px;
+    left: 20px;
+    background-color: #fff;
     border: none;
     border-radius: 50%;
     z-index: 1001;
-    padding: 6px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+
+  .menu_btn::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 222, 173, 0.5); /* Soft bisque color */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    transition: width 0.4s ease, height 0.4s ease;
+  }
+
+  .menu_btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu_btn:hover::before {
+    width: 150%;
+    height: 150%;
+  }
+
+  .menu_btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   .menu_img {
     width: 20px;
+    height: 20px;
     display: block;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
   }
-
   .nav {
     display: flex;
     flex-direction: column;
@@ -1029,12 +1158,6 @@ tr:hover {
     font-size: 0.9rem;
   }
 
-  .lower_box {
-    position: absolute;
-    top: 220px;
-    left: 96vw;
-  }
-
   .show_orders {
     display: block;
     width: 84vw;
@@ -1080,22 +1203,58 @@ tr:hover {
 
   .menu_btn {
     position: fixed;
-    top: 14px;
-    left: 10px;
-    background-color: rgba(128, 128, 128, 0.98);
+    top: 20px;
+    left: 20px;
+    background-color: #fff;
     border: none;
     border-radius: 50%;
     z-index: 1001;
-    padding: 6px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+
+  .menu_btn::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 222, 173, 0.5); /* Soft bisque color */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    transition: width 0.4s ease, height 0.4s ease;
+  }
+
+  .menu_btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu_btn:hover::before {
+    width: 150%;
+    height: 150%;
+  }
+
+  .menu_btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   .menu_img {
     width: 20px;
+    height: 20px;
     display: block;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
   }
 
   .nav {
@@ -1196,12 +1355,6 @@ tr:hover {
     font-size: 0.9rem;
   }
 
-  .lower_box {
-    position: absolute;
-    top: 220px;
-    left: 355px;
-  }
-
   .show_orders {
     display: block;
     width: 80%;
@@ -1247,24 +1400,59 @@ tr:hover {
 
   .menu_btn {
     position: fixed;
-    top: 14px;
-    left: 10px;
-    background-color: rgba(128, 128, 128, 0.98);
+    top: 20px;
+    left: 20px;
+    background-color: #fff;
     border: none;
     border-radius: 50%;
     z-index: 1001;
-    padding: 6px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+
+  .menu_btn::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 222, 173, 0.5); /* Soft bisque color */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    transition: width 0.4s ease, height 0.4s ease;
+  }
+
+  .menu_btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu_btn:hover::before {
+    width: 150%;
+    height: 150%;
+  }
+
+  .menu_btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   .menu_img {
     width: 20px;
+    height: 20px;
     display: block;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
   }
-
   .nav {
     display: flex;
     flex-direction: column;
@@ -1343,17 +1531,6 @@ tr:hover {
     left: -20px;
     width: 88vw;
   }
-  .input_wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-  .btn_box {
-    position: absolute;
-    right: -10x !important;
-    bottom: 10px !important;
-  }
 
   .modal-content {
     padding: 15px;
@@ -1368,10 +1545,26 @@ tr:hover {
     font-size: 0.9rem;
   }
 
-  .lower_box {
-    position: absolute;
-    top: 210px;
-    left: 355px;
+  .input_wrapper {
+    margin-bottom: 60px; /* Increase margin to allow space for buttons */
+    flex-direction: column;
+  }
+
+  .btn_box {
+    right: 15px;
+    bottom: 10px;
+    padding-right: 10px;
+  }
+
+  .input_buttons {
+    gap: 10px;
+  }
+
+  .submit_btn,
+  .clear_btn {
+    width: 80px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
   }
 
   .show_orders {
@@ -1419,22 +1612,58 @@ tr:hover {
 
   .menu_btn {
     position: fixed;
-    top: 14px;
-    left: 10px;
-    background-color: rgba(128, 128, 128, 0.98);
+    top: 20px;
+    left: 20px;
+    background-color: #fff;
     border: none;
     border-radius: 50%;
     z-index: 1001;
-    padding: 6px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+
+  .menu_btn::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 222, 173, 0.5); /* Soft bisque color */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    transition: width 0.4s ease, height 0.4s ease;
+  }
+
+  .menu_btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu_btn:hover::before {
+    width: 150%;
+    height: 150%;
+  }
+
+  .menu_btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   .menu_img {
     width: 20px;
+    height: 20px;
     display: block;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease;
   }
 
   .nav {

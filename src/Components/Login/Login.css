@@ -320,6 +320,10 @@ button:disabled,
     gap: 2rem;
   }
 
+  .signup-wrapper {
+    flex-direction: column-reverse;
+  }
+
   .login-form-section,
   .info-section {
     width: 100%;
@@ -344,6 +348,10 @@ button:disabled,
   .login-container {
     padding: 1.5rem;
     overflow-x: hidden;
+  }
+
+  .signup-wrapper {
+    flex-direction: column-reverse;
   }
 
   .login-form-container {

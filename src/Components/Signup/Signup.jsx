@@ -104,7 +104,7 @@ export default function Signup({ onNewSignup }) {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container signup-wrapper">
       {/* Info section with image - same as login page */}
       <div className="info-section">
         <div className="info-headings">
