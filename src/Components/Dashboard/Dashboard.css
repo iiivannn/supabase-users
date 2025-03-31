@@ -437,7 +437,7 @@ body {
 }
 
 .box_msg {
-  position: absolute;
+  margin: 0;
 }
 
 /* ORDER TABLE */
