@@ -128,8 +128,7 @@ export default function Dashboard({ userName, onLogout }) {
       .from("user_order")
       .select("parcel_name, parcel_barcode, status, added_on, completed_at")
       .eq("username", user.user_metadata?.username || user.email)
-      .order("added_on", { ascending: false }) // Sort by added_on date instead
-      .limit(5); // Increased limit to show more parcels
+      .order("added_on", { ascending: false }); // Sort by added_on date instead
 
     if (error) {
       console.error("Error fetching parcels:", error);

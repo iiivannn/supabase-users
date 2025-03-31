@@ -10,6 +10,8 @@ export default function AllOrders({ onLogout }) {
   const [sortField, setSortField] = useState("completed_at");
   const [sortDirection, setSortDirection] = useState(true); // false = descending
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
 
   const handleMenuToggle = () => {
     setIsMenuActive((prevState) => !prevState);
@@ -43,6 +45,15 @@ export default function AllOrders({ onLogout }) {
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
+
+  useEffect(() => {
+    const completed = orders.filter(
+      (order) => order.status === "completed"
+    ).length;
+    const pending = orders.filter((order) => order.status === "pending").length;
+    setCompletedCount(completed);
+    setPendingCount(pending);
+  }, [orders]);
 
   const handleSort = (field) => {
     // If clicking the same field, toggle direction
@@ -85,6 +96,7 @@ export default function AllOrders({ onLogout }) {
         <div className="orders_container">
           <div className="orders-header">
             <h2>All Orders</h2>
+
             <div className="sort-buttons">
               <button
                 className={`sort-btn ${
@@ -105,6 +117,10 @@ export default function AllOrders({ onLogout }) {
                 {sortField === "completed_at" && (sortDirection ? "↑" : "↓")}
               </button>
             </div>
+          </div>
+          <div className="order-stats">
+            <p>Received Parcels: {completedCount}</p>
+            <p>Pending Parcels: {pendingCount}</p>
           </div>
 
           {error && <p className="error-message">{error}</p>}
