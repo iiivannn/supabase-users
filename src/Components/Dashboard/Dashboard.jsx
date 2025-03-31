@@ -23,6 +23,7 @@ export default function Dashboard({ userName, onLogout }) {
   const [deviceId, setDeviceId] = useState("");
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const handleMenuToggle = () => {
     setIsMenuActive((prevState) => !prevState);
@@ -122,16 +123,16 @@ export default function Dashboard({ userName, onLogout }) {
       return;
     }
 
+    // Fetch all parcels (both pending and completed) instead of just completed ones
     const { data, error } = await supabase
       .from("user_order")
       .select("parcel_name, parcel_barcode, status, added_on, completed_at")
       .eq("username", user.user_metadata?.username || user.email)
-      .eq("status", "completed") // Only get completed parcels
-      .order("completed_at", { ascending: false }) // Sort by completion date
-      .limit(3);
+      .order("added_on", { ascending: false }) // Sort by added_on date instead
+      .limit(5); // Increased limit to show more parcels
 
     if (error) {
-      console.error("Error fetching top parcels:", error);
+      console.error("Error fetching parcels:", error);
     } else {
       setTopParcels(data);
     }
@@ -237,9 +238,15 @@ export default function Dashboard({ userName, onLogout }) {
     setParcelBarcode("");
   };
 
-  const handleRefresh = () => {
-    getTopParcels();
-    getRecentActivities();
+  const handleRefresh = async () => {
+    setRefresh(true); // Set refresh state to true
+    try {
+      await Promise.all([getTopParcels(), getRecentActivities()]); // Fetch data
+    } catch (error) {
+      console.error("Error during refresh:", error);
+    } finally {
+      setRefresh(false); // Reset refresh state to false
+    }
   };
 
   const formatDate = (dateString) => {
@@ -302,6 +309,7 @@ export default function Dashboard({ userName, onLogout }) {
               topParcels={topParcels}
               formatDate={formatDate}
               handleRefresh={handleRefresh}
+              isRefresh={refresh}
             />
           </div>
 

@@ -1,5 +1,7 @@
 import "./Dashboard.css";
 import help from "../../assets/question-mark.png";
+import { useEffect, useState } from "react";
+import shipping from "../../assets/shipping.jpg";
 
 export default function AddParcel({
   parcelName,
@@ -10,12 +12,34 @@ export default function AddParcel({
   handleClear,
   success,
   error,
-  setShowModal, // New prop to update modal state in parent
-  showModal, // New prop to track modal state
+  setShowModal,
+  showModal,
 }) {
-  // Function to toggle modal
+  // State for notification modal
+  const [showNotification, setShowNotification] = useState(false);
+
+  // Function to toggle help modal
   const toggleModal = () => {
     setShowModal(!showModal);
+  };
+
+  // Show notification modal when success or error changes
+  useEffect(() => {
+    if (success || error) {
+      setShowNotification(true);
+
+      // Auto-hide notification after 3 seconds
+      const timer = setTimeout(() => {
+        setShowNotification(false);
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [success, error]);
+
+  // Function to close notification modal
+  const closeNotification = () => {
+    setShowNotification(false);
   };
 
   return (
@@ -31,7 +55,7 @@ export default function AddParcel({
         />
       </div>
 
-      {/* Modal remains the same as in previous implementation */}
+      {/* Help Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={toggleModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -44,6 +68,11 @@ export default function AddParcel({
               <li>
                 Enter the{" "}
                 <p className="colored-text-check">shipping information</p>.
+                <img
+                  src={shipping}
+                  className="shipping-info"
+                  alt="Shippin Information"
+                />
               </li>
               <li>
                 Do not enter the{" "}
@@ -60,7 +89,25 @@ export default function AddParcel({
         </div>
       )}
 
-      {/* Rest of the component remains the same */}
+      {/* Notification Modal for Success/Error Messages */}
+      {showNotification && (success || error) && (
+        <div className="notification-overlay">
+          <div
+            className={`notification-modal ${
+              success ? "success-modal" : "error-modal"
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="notification-close" onClick={closeNotification}>
+              ×
+            </button>
+
+            <div className="notification-message">{success || error}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Input Fields */}
       <div className="input_wrapper">
         <div className="input_name">
           <label htmlFor="parcel_name">Parcel Name: </label>
@@ -88,16 +135,6 @@ export default function AddParcel({
       </div>
 
       <div className="lower_box">
-        {success && (
-          <p className="box_msg" style={{ color: "green" }}>
-            {success}
-          </p>
-        )}
-        {error && (
-          <p className="box_msg" style={{ color: "red" }}>
-            {error}
-          </p>
-        )}
         <div className="btn_box">
           <div className="input_buttons">
             <button className="submit_btn" onClick={handleInsert}>
