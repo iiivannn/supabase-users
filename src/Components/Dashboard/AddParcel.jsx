@@ -67,13 +67,19 @@ export default function AddParcel({
             <ul>
               <li>
                 Enter the{" "}
-                <p className="colored-text-check">shipping information</p>.
+                <p className="colored-text-check">shipping information</p> for
+                the Parcel Barcode.
                 <img
                   src={shipping}
                   className="shipping-info"
                   alt="Shippin Information"
                 />
+                <p className="note">
+                  <b>Note:</b> Shipping information may not appear immediately.
+                  Please wait 1-2 days.
+                </p>
               </li>
+
               <li>
                 Do not enter the{" "}
                 <p className="colored-text-uncheck">Order ID</p>.

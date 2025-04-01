@@ -283,6 +283,10 @@ body {
   width: 20px;
 }
 
+.note {
+  margin: 0 0 5% 3%;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -440,6 +444,7 @@ body {
   align-items: center;
   gap: 15px;
   margin-bottom: 40px;
+  width: 100%;
 }
 
 .input_name,
@@ -455,6 +460,8 @@ body {
   border-radius: 5px;
   padding: 3px;
   font-family: "Poppins";
+  width: 100%;
+  max-width: 200px;
 }
 
 /* Update the .btn_box class to be properly positioned */
@@ -529,6 +536,7 @@ body {
   cursor: pointer;
   border-radius: 20px;
   transition: all 0.2s ease;
+  font-family: "Poppins";
 }
 
 .status-tab:hover {
@@ -536,8 +544,9 @@ body {
 }
 
 .status-tab.active {
-  background-color: #0066cc;
-  color: white;
+  background-color: bisque;
+  color: black;
+  font-weight: 700;
 }
 
 .count {
@@ -642,6 +651,7 @@ body {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
+  font-family: "Poppins", sans-serif;
 }
 
 .refresh_btn:hover {
@@ -805,6 +815,10 @@ body {
     border-radius: 20px;
     position: relative;
     margin: 0 20px;
+  }
+
+  .input_wrapper {
+    width: 100% !important;
   }
 
   .bottom_components {
