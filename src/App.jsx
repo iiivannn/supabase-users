@@ -18,32 +18,37 @@ function App() {
   const [isNewSignup, setIsNewSignup] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        setUser(user);
-        setUserName(user.user_metadata?.username || "Unknown User");
+    const fetchSession = async () => {
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) {
+          console.error("Error fetching user:", error);
+          return;
+        }
+        if (user) {
+          setUser(user);
+          setUserName(user.user_metadata?.username || "Unknown User");
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching user:", err);
       }
     };
 
-    fetchUser();
+    fetchSession();
 
     // Listen for authentication state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (event === "SIGNED_IN" && !isNewSignup) {
+        console.log("Auth state change event:", event); // Debugging log
+        if (event === "SIGNED_IN") {
           if (session?.user) {
             setUser(session.user);
             setUserName(session.user.user_metadata?.username || "Unknown User");
           }
-        } else if (event === "SIGNED_IN" && isNewSignup) {
-          // Reset the new signup flag after signup
-          setIsNewSignup(false);
         } else if (event === "SIGNED_OUT") {
-          // Clear user state when signed out
           setUser(null);
           setUserName("");
         }

@@ -12,6 +12,7 @@ export default function AllOrders({ onLogout }) {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [completedCount, setCompletedCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
+  const [selectedRows, setSelectedRows] = useState([]); // Track selected rows for deletion
 
   const handleMenuToggle = () => {
     setIsMenuActive((prevState) => !prevState);
@@ -29,7 +30,9 @@ export default function AllOrders({ onLogout }) {
 
       const { data, error } = await supabase
         .from("user_order")
-        .select("parcel_name, parcel_barcode, status, added_on, completed_at")
+        .select(
+          "id, parcel_name, parcel_barcode, status, added_on, completed_at"
+        )
         .eq("username", user.user_metadata.username)
         .order(field, { ascending });
 
@@ -37,6 +40,8 @@ export default function AllOrders({ onLogout }) {
         setError(error.message);
       } else {
         setOrders(data);
+        // Clear selected rows when orders are refreshed
+        setSelectedRows([]);
       }
     },
     [sortField, sortDirection]
@@ -75,6 +80,47 @@ export default function AllOrders({ onLogout }) {
     };
     const date = new Date(dateString).toLocaleString("en-US", options);
     return date;
+  };
+
+  // Handle checkbox selection
+  const handleRowSelect = (orderId) => {
+    setSelectedRows((prevSelected) => {
+      if (prevSelected.includes(orderId)) {
+        return prevSelected.filter((id) => id !== orderId);
+      } else {
+        return [...prevSelected, orderId];
+      }
+    });
+  };
+
+  // Handle bulk selection of all rows
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedRows(orders.map((order) => order.id));
+    } else {
+      setSelectedRows([]);
+    }
+  };
+
+  // Handle delete of selected rows
+  const handleDeleteSelected = async () => {
+    if (selectedRows.length === 0) return;
+
+    try {
+      const { error } = await supabase
+        .from("user_order")
+        .delete()
+        .in("id", selectedRows);
+
+      if (error) {
+        setError(`Error deleting orders: ${error.message}`);
+      } else {
+        // Refresh orders after deletion
+        fetchOrders();
+      }
+    } catch (err) {
+      setError(`Unexpected error: ${err.message}`);
+    }
   };
 
   return (
@@ -118,9 +164,21 @@ export default function AllOrders({ onLogout }) {
               </button>
             </div>
           </div>
+
           <div className="order-stats">
-            <p>Received Parcels: {completedCount}</p>
-            <p>Pending Parcels: {pendingCount}</p>
+            <div className="order-stats-info">
+              <p>Received Parcels: {completedCount}</p>
+              <p>Pending Parcels: {pendingCount}</p>
+            </div>
+            <div className="actions-container">
+              <button
+                className="delete-btn"
+                disabled={selectedRows.length === 0}
+                onClick={handleDeleteSelected}
+              >
+                Delete Selected
+              </button>
+            </div>
           </div>
 
           {error && <p className="error-message">{error}</p>}
@@ -129,6 +187,16 @@ export default function AllOrders({ onLogout }) {
             <table>
               <thead>
                 <tr>
+                  <th>
+                    <input
+                      type="checkbox"
+                      onChange={handleSelectAll}
+                      checked={
+                        selectedRows.length === orders.length &&
+                        orders.length > 0
+                      }
+                    />
+                  </th>
                   <th>Parcel Name</th>
                   <th>Parcel Barcode</th>
                   <th>Status</th>
@@ -137,8 +205,15 @@ export default function AllOrders({ onLogout }) {
                 </tr>
               </thead>
               <tbody>
-                {orders.map((order, index) => (
-                  <tr key={index}>
+                {orders.map((order) => (
+                  <tr key={order.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.includes(order.id)}
+                        onChange={() => handleRowSelect(order.id)}
+                      />
+                    </td>
                     <td>{order.parcel_name}</td>
                     <td>{order.parcel_barcode}</td>
                     <td>
