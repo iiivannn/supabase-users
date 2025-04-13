@@ -86,7 +86,7 @@ export default function Dashboard({ userName, onLogout }) {
     const { count: todayCount, error: todayError } = await supabase
       .from("user_order")
       .select("*", { count: "exact" })
-      .eq("status", "completed")
+      .in("status", ["completed", "oversized"])
       .eq("username", user.user_metadata?.username || user.email)
       .gte("completed_at", startOfDay.toISOString());
 
@@ -94,7 +94,7 @@ export default function Dashboard({ userName, onLogout }) {
     const { count: weeklyCount, error: weeklyError } = await supabase
       .from("user_order")
       .select("*", { count: "exact" })
-      .eq("status", "completed")
+      .in("status", ["completed", "oversized"])
       .eq("username", user.user_metadata?.username || user.email)
       .gte("completed_at", startOfWeek.toISOString());
 
@@ -162,8 +162,15 @@ export default function Dashboard({ userName, onLogout }) {
       const activities = data.map((item) => ({
         parcel_name: item.parcel_name,
         remarks:
-          item.status === "completed" ? "Received Parcel" : "Added Parcel",
-        date: item.status === "completed" ? item.completed_at : item.added_on,
+          item.status === "completed"
+            ? "Received Parcel"
+            : item.status === "oversized"
+            ? "Oversized Parcel"
+            : "Added Parcel",
+        date:
+          item.status === "completed" || item.status === "oversized"
+            ? item.completed_at
+            : item.added_on,
       }));
       const sortedActivities = activities.sort(
         (a, b) => new Date(b.date) - new Date(a.date)

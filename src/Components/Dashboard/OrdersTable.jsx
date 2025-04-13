@@ -12,21 +12,25 @@ export default function OrdersTable({
   // Group parcels by their status
   const groupParcelsByStatus = () => {
     // For All tab: show all parcels
-    // For Pending tab: show parcels where status is "pending" or completed_at is null
-    // For Completed tab: show parcels where status is "completed" or completed_at is not null
+    // For Pending tab: show parcels where status is "pending"
+    // For Completed tab: show parcels where status is "completed"
+    // For Oversized tab: show parcels where status is "oversized"
 
-    const pending = topParcels.filter(
-      (parcel) => parcel.status === "pending" || !parcel.completed_at
-    );
+    const pending = topParcels.filter((parcel) => parcel.status === "pending");
 
     const completed = topParcels.filter(
-      (parcel) => parcel.status === "completed" || parcel.completed_at
+      (parcel) => parcel.status === "completed"
+    );
+
+    const oversized = topParcels.filter(
+      (parcel) => parcel.status === "oversized"
     );
 
     const grouped = {
       All: topParcels,
       Pending: pending,
       Completed: completed,
+      Oversized: oversized,
     };
 
     // Count the number of parcels in each category
@@ -34,13 +38,14 @@ export default function OrdersTable({
       All: topParcels.length,
       Pending: pending.length,
       Completed: completed.length,
+      Oversized: oversized.length,
     };
 
     return { grouped, counts };
   };
 
   const { grouped, counts } = groupParcelsByStatus();
-  const statusTabs = ["All", "Pending", "Completed"];
+  const statusTabs = ["All", "Pending", "Completed", "Oversized"];
 
   // Display a message if there are no parcels to show
   if (topParcels.length === 0) {
@@ -94,23 +99,23 @@ export default function OrdersTable({
       <div className="parcel-cards">
         {grouped[activeTab].length > 0 ? (
           grouped[activeTab].map((parcel, index) => {
-            const isCompleted =
-              parcel.status === "completed" || parcel.completed_at;
+            let statusClass = "pending";
+            let statusLabel = "Pending";
+
+            if (parcel.status === "completed") {
+              statusClass = "completed";
+              statusLabel = "Completed";
+            } else if (parcel.status === "oversized") {
+              statusClass = "oversized";
+              statusLabel = "Oversized";
+            }
+
             return (
-              <div
-                key={index}
-                className={`parcel-card ${
-                  isCompleted ? "completed" : "pending"
-                }`}
-              >
+              <div key={index} className={`parcel-card ${statusClass}`}>
                 <div className="parcel-header">
                   <h3>{parcel.parcel_name}</h3>
-                  <span
-                    className={`status-badge ${
-                      isCompleted ? "completed" : "pending"
-                    }`}
-                  >
-                    {isCompleted ? "Completed" : "Pending"}
+                  <span className={`status-badge ${statusClass}`}>
+                    {statusLabel}
                   </span>
                 </div>
                 <div className="parcel-details">

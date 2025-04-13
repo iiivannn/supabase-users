@@ -13,6 +13,7 @@ export default function AllOrders({ onLogout }) {
   const [completedCount, setCompletedCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]); // Track selected rows for deletion
+  const [oversizedCount, setOversizedCount] = useState(0);
 
   const handleMenuToggle = () => {
     setIsMenuActive((prevState) => !prevState);
@@ -56,8 +57,13 @@ export default function AllOrders({ onLogout }) {
       (order) => order.status === "completed"
     ).length;
     const pending = orders.filter((order) => order.status === "pending").length;
+    const oversized = orders.filter(
+      (order) => order.status === "oversized"
+    ).length;
+
     setCompletedCount(completed);
     setPendingCount(pending);
+    setOversizedCount(oversized); // Add a new state for oversized count
   }, [orders]);
 
   const handleSort = (field) => {
@@ -169,6 +175,7 @@ export default function AllOrders({ onLogout }) {
             <div className="order-stats-info">
               <p>Received Parcels: {completedCount}</p>
               <p>Pending Parcels: {pendingCount}</p>
+              <p>Oversized Parcels: {oversizedCount}</p>
             </div>
             <div className="actions-container">
               <button

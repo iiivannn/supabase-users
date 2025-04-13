@@ -296,6 +296,13 @@ tbody tr:hover {
     padding: 8px 5px;
   }
 }
+.status-badge.oversized {
+  background-color: #00ff7f;
+  color: #006b35;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+}
 
 @media screen and (max-width: 1250px) {
   .orders_container {
@@ -303,6 +310,13 @@ tbody tr:hover {
     height: auto;
     min-height: calc(100vh - 90px);
     margin: 0;
+  }
+  .status-badge.oversized {
+    background-color: #00ff7f;
+    color: #006b35;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-weight: 500;
   }
 
   .table-container {

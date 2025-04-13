@@ -612,6 +612,27 @@ body {
   color: #1b5e20;
 }
 
+/* Existing CSS styles remain unchanged */
+
+/* Add the oversized status badge styling */
+.status-badge.oversized {
+  background-color: #00ff7f;
+  color: #006b35;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+/* Add styling for oversized parcel cards */
+.parcel-card.oversized {
+  border-left: 4px solid #00ff7f;
+}
+
+/* Add hover effect for oversized cards for consistency */
+.parcel-card.oversized:hover {
+  box-shadow: 0 4px 12px rgba(0, 255, 127, 0.2);
+}
+
 .parcel-details {
   display: flex;
   flex-direction: column;
@@ -895,7 +916,7 @@ body {
   /* Reduce space between summary_stats and button_arrow_div */
   .summary_stats {
     gap: 15px;
-    height: 65px;
+    height: 40%;
   }
 
   .button_arrow_div {
@@ -934,7 +955,7 @@ body {
 
   .bottom_components {
     width: 100vw;
-    margin: 23vh 0vw 0;
+    margin: 25vh 0vw 0;
   }
 
   .middle_components {

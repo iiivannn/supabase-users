@@ -179,7 +179,6 @@ export default function Login() {
           user_id: userUuid,
           username: username,
           isLogout: false,
-          isOccupied: true,
         })
         .eq("device_id", deviceId);
 
