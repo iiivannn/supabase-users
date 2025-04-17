@@ -19,9 +19,11 @@ export default function Login() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showMaxDeviceModal, setShowMaxDeviceModal] = useState(false);
   const navigate = useNavigate();
 
   const carouselImages = [img1, img2, img3, img4];
+  const MAX_DEVICES = 4;
 
   // Fetch available device IDs on component mount
   useEffect(() => {
@@ -43,9 +45,12 @@ export default function Login() {
         setError("Error fetching available devices. Please try again.");
       } else {
         setAvailableDevices(data || []);
+
         // If there are available devices, set the first one as default
         if (data && data.length > 0) {
           setDeviceId(data[0].device_id);
+        } else {
+          setDeviceId("");
         }
       }
     } catch (err) {
@@ -59,35 +64,37 @@ export default function Login() {
   // Function to get the next device ID
   const getNextDeviceId = async () => {
     try {
-      // Get all device IDs to find the highest unit number
+      // Get all device IDs to find the highest device number
       const { data, error } = await supabase
         .from("unit_devices")
         .select("device_id");
 
       if (error) {
         console.error("Error fetching devices for ID generation:", error);
-        return "unit1"; // Default if error
+        return "Device ID: 1"; // Default if error
       }
 
       if (!data || data.length === 0) {
-        return "unit1"; // First device
+        return "Device ID: 1"; // First device
       }
 
-      // Find the highest unit number
+      // Find the highest device number
       let highestNumber = 0;
       data.forEach((device) => {
-        if (device.device_id.startsWith("unit")) {
-          const unitNumber = parseInt(device.device_id.replace("unit", ""), 10);
-          if (!isNaN(unitNumber) && unitNumber > highestNumber) {
-            highestNumber = unitNumber;
+        // Extract number from "Device ID: X" format
+        const match = device.device_id.match(/Device ID: (\d+)/);
+        if (match && match[1]) {
+          const deviceNumber = parseInt(match[1], 10);
+          if (!isNaN(deviceNumber) && deviceNumber > highestNumber) {
+            highestNumber = deviceNumber;
           }
         }
       });
 
-      return `unit${highestNumber + 1}`;
+      return `Device ID: ${highestNumber + 1}`;
     } catch (err) {
       console.error("Error generating next device ID:", err);
-      return "unit1"; // Default if error
+      return "Device ID: 1"; // Default if error
     }
   };
 
@@ -95,6 +102,21 @@ export default function Login() {
   const handleAddNewDevice = async () => {
     setIsLoading(true);
     try {
+      // Check if max devices limit is reached
+      const { data: allDevices, error: countError } = await supabase
+        .from("unit_devices")
+        .select("device_id");
+
+      if (countError) {
+        throw new Error("Could not verify device count");
+      }
+
+      if (allDevices && allDevices.length >= MAX_DEVICES) {
+        setShowMaxDeviceModal(true);
+        setIsAddingNewDevice(false);
+        return;
+      }
+
       // Generate the next device ID
       const nextDeviceId = await getNextDeviceId();
 
@@ -111,9 +133,9 @@ export default function Login() {
 
       // Refresh the available devices list
       await fetchAvailableDevices();
-      setDeviceId(nextDeviceId);
+
+      setSuccessMessage(`New ${nextDeviceId} added successfully!`);
       setIsAddingNewDevice(false);
-      setSuccessMessage(`New device ${nextDeviceId} added successfully!`);
     } catch (err) {
       console.error("Unexpected error adding device:", err);
       setError("An unexpected error occurred while adding the device.");
@@ -205,8 +227,27 @@ export default function Login() {
     }
   };
 
+  // Function to close the max device modal
+  const closeMaxDeviceModal = () => {
+    setShowMaxDeviceModal(false);
+  };
+
   return (
     <div className="login-container">
+      {/* Max Device Modal */}
+      {showMaxDeviceModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Maximum Device Limit Reached</h3>
+            <p>You've reached the maximum limit of {MAX_DEVICES} devices.</p>
+            <p>Please use one of the available device IDs instead.</p>
+            <button onClick={closeMaxDeviceModal} className="primary-button">
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Login form section */}
       <div className="login-form-section">
         <div className="login-form-container">
@@ -264,18 +305,26 @@ export default function Login() {
                     onChange={(e) => setDeviceId(e.target.value)}
                     disabled={isLoading}
                   >
-                    {availableDevices.map((device) => (
-                      <option key={device.device_id} value={device.device_id}>
-                        {device.device_id}
+                    {availableDevices.length > 0 ? (
+                      availableDevices.map((device) => (
+                        <option key={device.device_id} value={device.device_id}>
+                          {device.device_id}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>
+                        Please add a new device
                       </option>
-                    ))}
+                    )}
                   </select>
                 </div>
               </div>
 
               <div className="device-footer">
                 <div className="device-info">
-                  These are unassigned devices available for registration.
+                  {availableDevices.length > 0
+                    ? "These are unassigned devices available for registration."
+                    : "No devices available. Please add a new device."}
                 </div>
 
                 <button
