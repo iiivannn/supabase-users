@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
 import Navigation from "./Navigation";
@@ -24,216 +26,339 @@ export default function Dashboard({ userName, onLogout }) {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleMenuToggle = () => {
     setIsMenuActive((prevState) => !prevState);
   };
 
-  // Fetch the device ID of the logged-in user
-  const getDeviceId = async () => {
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+  // Added for session verification
+  useEffect(() => {
+    async function verifySession() {
+      setIsLoading(true);
+      try {
+        // First check if we have a session
+        const { data: sessionData } = await supabase.auth.getSession();
 
-    if (userError || !user) {
-      console.error("Error fetching user:", userError);
-      return;
+        // If no session found, try to restore it from tokens in cookies
+        if (!sessionData.session) {
+          console.log(
+            "No active session found, attempting to restore from cookies"
+          );
+
+          // Get tokens from cookies if they exist
+          const getTokenFromCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(";").shift();
+            return null;
+          };
+
+          const accessToken = getTokenFromCookie("sb-access-token");
+          const refreshToken = getTokenFromCookie("sb-refresh-token");
+
+          if (accessToken && refreshToken) {
+            console.log("Found tokens in cookies, trying to restore session");
+            // Explicitly set the session using tokens
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+
+            if (error) {
+              console.error("Failed to restore session from tokens:", error);
+              onLogout(); // Force logout on error
+              return;
+            }
+
+            console.log("Session restored successfully");
+          } else {
+            console.log("No tokens found in cookies");
+            onLogout(); // No tokens found, force logout
+            return;
+          }
+        }
+
+        // Verify the session works with a test query
+        const { error: testError } = await supabase
+          .from("unit_devices")
+          .select("device_id")
+          .limit(1);
+
+        if (testError) {
+          console.error(
+            "Session appears invalid, test query failed:",
+            testError
+          );
+          onLogout(); // Force logout if test query fails
+          return;
+        }
+
+        // If we get here, the session is valid
+        console.log("Session verified successfully");
+        setIsLoading(false);
+
+        // Fetch initial data
+        getDeviceId();
+        getSummary();
+        getTopParcels();
+        getRecentActivities();
+      } catch (err) {
+        console.error("Session verification error:", err);
+        onLogout(); // Force logout on any error
+      }
     }
 
-    // Fetch the device ID associated with the logged-in user
-    const { data: deviceData, error: deviceError } = await supabase
-      .from("unit_devices")
-      .select("device_id")
-      .eq("user_id", user.id)
-      .single();
+    verifySession();
+  }, [onLogout]);
 
-    if (deviceError) {
-      console.error("Error fetching device ID:", deviceError);
-    } else if (deviceData) {
-      setDeviceId(deviceData.device_id);
+  // Fetch the device ID of the logged-in user
+  const getDeviceId = async () => {
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        return;
+      }
+
+      if (!user) {
+        console.error("User not found");
+        onLogout(); // Force logout if user not found
+        return;
+      }
+
+      // Fetch the device ID associated with the logged-in user
+      const { data: deviceData, error: deviceError } = await supabase
+        .from("unit_devices")
+        .select("device_id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (deviceError) {
+        console.error("Error fetching device ID:", deviceError);
+      } else if (deviceData) {
+        setDeviceId(deviceData.device_id);
+      }
+    } catch (err) {
+      console.error("Error in getDeviceId:", err);
     }
   };
 
   // Fetch today's and weekly parcel counts for the logged-in user
   const getSummary = async () => {
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      console.error("Error fetching user:", userError);
-      return;
-    }
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        return;
+      }
 
-    const now = new Date();
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      0,
-      0,
-      0
-    );
-    const startOfWeek = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - now.getDay()
-    );
+      if (!user) {
+        console.error("User not found");
+        onLogout(); // Force logout if user not found
+        return;
+      }
 
-    // Fetch today's count for the logged-in user
-    const { count: todayCount, error: todayError } = await supabase
-      .from("user_order")
-      .select("*", { count: "exact" })
-      .in("status", ["completed", "oversized"])
-      .eq("username", user.user_metadata?.username || user.email)
-      .gte("completed_at", startOfDay.toISOString());
+      const now = new Date();
+      const startOfDay = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        0,
+        0,
+        0
+      );
+      const startOfWeek = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() - now.getDay()
+      );
 
-    // Fetch weekly count for the logged-in user
-    const { count: weeklyCount, error: weeklyError } = await supabase
-      .from("user_order")
-      .select("*", { count: "exact" })
-      .in("status", ["completed", "oversized"])
-      .eq("username", user.user_metadata?.username || user.email)
-      .gte("completed_at", startOfWeek.toISOString());
+      // Fetch today's count for the logged-in user
+      const { count: todayCount, error: todayError } = await supabase
+        .from("user_order")
+        .select("*", { count: "exact" })
+        .in("status", ["completed", "oversized"])
+        .eq("username", user.user_metadata?.username || user.email)
+        .gte("completed_at", startOfDay.toISOString());
 
-    if (todayError) {
-      console.error("Error fetching today's summary:", todayError);
-    } else {
-      setToday(todayCount);
-    }
+      // Fetch weekly count for the logged-in user
+      const { count: weeklyCount, error: weeklyError } = await supabase
+        .from("user_order")
+        .select("*", { count: "exact" })
+        .in("status", ["completed", "oversized"])
+        .eq("username", user.user_metadata?.username || user.email)
+        .gte("completed_at", startOfWeek.toISOString());
 
-    if (weeklyError) {
-      console.error("Error fetching weekly summary:", weeklyError);
-    } else {
-      setWeekly(weeklyCount);
+      if (todayError) {
+        console.error("Error fetching today's summary:", todayError);
+      } else {
+        setToday(todayCount);
+      }
+
+      if (weeklyError) {
+        console.error("Error fetching weekly summary:", weeklyError);
+      } else {
+        setWeekly(weeklyCount);
+      }
+    } catch (err) {
+      console.error("Error in getSummary:", err);
     }
   };
 
   // Fetch top parcels for the logged-in user
   const getTopParcels = async () => {
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      console.error("Error fetching user:", userError);
-      return;
-    }
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        return;
+      }
 
-    // Fetch all parcels (both pending and completed) instead of just completed ones
-    const { data, error } = await supabase
-      .from("user_order")
-      .select("parcel_name, parcel_barcode, status, added_on, completed_at")
-      .eq("username", user.user_metadata?.username || user.email)
-      .order("added_on", { ascending: false }); // Sort by added_on date instead
+      if (!user) {
+        console.error("User not found");
+        onLogout(); // Force logout if user not found
+        return;
+      }
 
-    if (error) {
-      console.error("Error fetching parcels:", error);
-    } else {
-      setTopParcels(data);
+      // Fetch all parcels (both pending and completed) instead of just completed ones
+      const { data, error } = await supabase
+        .from("user_order")
+        .select("parcel_name, parcel_barcode, status, added_on, completed_at")
+        .eq("username", user.user_metadata?.username || user.email)
+        .order("added_on", { ascending: false }); // Sort by added_on date instead
+
+      if (error) {
+        console.error("Error fetching parcels:", error);
+      } else {
+        setTopParcels(data);
+      }
+    } catch (err) {
+      console.error("Error in getTopParcels:", err);
     }
   };
 
   // Fetch recent activities for the logged-in user
   const getRecentActivities = async () => {
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      console.error("Error fetching user:", userError);
-      return;
-    }
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        return;
+      }
 
-    const { data, error } = await supabase
-      .from("user_order")
-      .select("parcel_name, status, added_on, completed_at")
-      .eq("username", user.user_metadata?.username || user.email)
-      .order("added_on", { ascending: false })
-      .limit(8);
+      if (!user) {
+        console.error("User not found");
+        onLogout(); // Force logout if user not found
+        return;
+      }
 
-    if (error) {
-      console.error("Error fetching recent activities:", error);
-    } else {
-      const activities = data.map((item) => ({
-        parcel_name: item.parcel_name,
-        remarks:
-          item.status === "completed"
-            ? "Received Parcel"
-            : item.status === "oversized"
-            ? "Oversized Parcel"
-            : "Added Parcel",
-        date:
-          item.status === "completed" || item.status === "oversized"
-            ? item.completed_at
-            : item.added_on,
-      }));
-      const sortedActivities = activities.sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
-      );
-      setRecentActivities(sortedActivities);
+      const { data, error } = await supabase
+        .from("user_order")
+        .select("parcel_name, status, added_on, completed_at")
+        .eq("username", user.user_metadata?.username || user.email)
+        .order("added_on", { ascending: false })
+        .limit(8);
+
+      if (error) {
+        console.error("Error fetching recent activities:", error);
+      } else {
+        const activities = data.map((item) => ({
+          parcel_name: item.parcel_name,
+          remarks:
+            item.status === "completed"
+              ? "Received Parcel"
+              : item.status === "oversized"
+              ? "Oversized Parcel"
+              : "Added Parcel",
+          date:
+            item.status === "completed" || item.status === "oversized"
+              ? item.completed_at
+              : item.added_on,
+        }));
+        const sortedActivities = activities.sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
+        setRecentActivities(sortedActivities);
+      }
+    } catch (err) {
+      console.error("Error in getRecentActivities:", err);
     }
   };
-
-  // Fetch data on component mount
-  useEffect(() => {
-    getDeviceId();
-    getSummary();
-    getTopParcels();
-    getRecentActivities();
-  }, []);
 
   // Handle inserting a new parcel
   const handleInsert = async () => {
     setError("");
     setSuccess("");
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      setError("User not logged in");
-      return;
-    }
+      if (userError) {
+        setError("Error fetching user information");
+        return;
+      }
 
-    if (
-      !parcelBarcode ||
-      parcelBarcode.trim() === "" ||
-      !parcelName ||
-      parcelName.trim() === ""
-    ) {
-      setError("Incomplete Parcel Details.");
-      return;
-    }
+      if (!user) {
+        setError("User not logged in");
+        return;
+      }
 
-    const { error: insertError } = await supabase.from("user_order").insert([
-      {
-        username: user.user_metadata?.username || user.email,
-        parcel_name: parcelName,
-        parcel_barcode: parcelBarcode,
-        status: "pending",
-        added_on: new Date().toISOString(),
-        completed_at: null,
-      },
-    ]);
+      if (
+        !parcelBarcode ||
+        parcelBarcode.trim() === "" ||
+        !parcelName ||
+        parcelName.trim() === ""
+      ) {
+        setError("Incomplete Parcel Details.");
+        return;
+      }
 
-    if (insertError) {
-      console.error("Insert error:", insertError);
-      setError(insertError.message);
-    } else {
-      console.log("Insert successful");
-      setSuccess("Parcel details inserted successfully");
-      setParcelName("");
-      setParcelBarcode("");
-      getSummary(); // Update summary
-      getTopParcels(); // Update top parcels
-      getRecentActivities(); // Update recent activities
+      const { error: insertError } = await supabase.from("user_order").insert([
+        {
+          username: user.user_metadata?.username || user.email,
+          parcel_name: parcelName,
+          parcel_barcode: parcelBarcode,
+          status: "pending",
+          added_on: new Date().toISOString(),
+          completed_at: null,
+        },
+      ]);
+
+      if (insertError) {
+        console.error("Insert error:", insertError);
+        setError(insertError.message);
+      } else {
+        console.log("Insert successful");
+        setSuccess("Parcel details inserted successfully");
+        setParcelName("");
+        setParcelBarcode("");
+        getSummary(); // Update summary
+        getTopParcels(); // Update top parcels
+        getRecentActivities(); // Update recent activities
+      }
+    } catch (err) {
+      console.error("Error in handleInsert:", err);
+      setError("An unexpected error occurred");
     }
   };
 
@@ -247,7 +372,7 @@ export default function Dashboard({ userName, onLogout }) {
   const handleRefresh = async () => {
     setRefresh(true); // Set refresh state to true
     try {
-      await Promise.all([getTopParcels(), getRecentActivities()]); // Fetch data
+      await Promise.all([getSummary(), getTopParcels(), getRecentActivities()]); // Fetch all data
     } catch (error) {
       console.error("Error during refresh:", error);
     } finally {
@@ -268,6 +393,10 @@ export default function Dashboard({ userName, onLogout }) {
     const date = new Date(dateString).toLocaleString("en-US", options);
     return date;
   };
+
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
     <div>
