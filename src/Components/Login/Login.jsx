@@ -103,15 +103,15 @@ export default function Login() {
     setIsLoading(true);
     try {
       // Get all devices from the database
-      const { data: allDevices } = await supabase
-        .from("unit_devices")
-        .select("device_id");
+      // const { data: allDevices } = await supabase
+      //   .from("unit_devices")
+      //   .select("device_id");
 
       // Check if the total number of devices has reached the maximum limit
-      if (allDevices.length >= MAX_DEVICES) {
-        setShowMaxDeviceModal(true);
-        return;
-      }
+      // if (allDevices.length >= MAX_DEVICES) {
+      //   setShowMaxDeviceModal(true);
+      //   return;
+      // }
 
       // Get count of available (unassigned) devices
       const { data: availableDevices } = await supabase
@@ -121,6 +121,7 @@ export default function Login() {
 
       // Only allow adding a new device if there are fewer than 4 available devices
       if (availableDevices && availableDevices.length >= 4) {
+        setShowMaxDeviceModal(true);
         setError(
           "Cannot add new device. Maximum number of available devices reached."
         );
