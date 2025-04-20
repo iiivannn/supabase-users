@@ -194,6 +194,48 @@ export default function Login() {
         return;
       }
 
+      // Check if the user is already associated with another device
+      const { data: existingDevices, error: existingDeviceError } =
+        await supabase
+          .from("unit_devices")
+          .select("device_id")
+          .eq("user_id", userUuid);
+
+      if (existingDeviceError) {
+        console.error(
+          "Error checking existing device associations:",
+          existingDeviceError
+        );
+        setError("Error checking your device associations. Please try again.");
+        setIsLoading(false);
+        return;
+      }
+
+      // If user has existing device associations, clear them
+      if (existingDevices && existingDevices.length > 0) {
+        // Clear all existing device associations for this user
+        const { error: clearError } = await supabase
+          .from("unit_devices")
+          .update({ user_id: null, username: null, isLogout: true })
+          .eq("user_id", userUuid);
+
+        if (clearError) {
+          console.error(
+            "Error clearing existing device associations:",
+            clearError
+          );
+          setError(
+            "Error updating your device associations. Please try again."
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        console.log(
+          `Cleared user ${username} from ${existingDevices.length} previous device(s)`
+        );
+      }
+
       // Update the device with the user's information
       const { error: updateError } = await supabase
         .from("unit_devices")
