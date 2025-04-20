@@ -102,42 +102,39 @@ export default function Login() {
   const handleAddNewDevice = async () => {
     setIsLoading(true);
     try {
-      // Check if max devices limit is reached
-      const { data: allDevices, error: countError } = await supabase
+      // Get all devices from the database
+      const { data: allDevices } = await supabase
         .from("unit_devices")
         .select("device_id");
 
-      if (countError) {
-        throw new Error("Could not verify device count");
-      }
-
-      if (allDevices && allDevices.length >= MAX_DEVICES) {
+      // Check if the total number of devices has reached the maximum limit
+      if (allDevices.length >= MAX_DEVICES) {
         setShowMaxDeviceModal(true);
-        setIsAddingNewDevice(false);
         return;
       }
 
-      // Generate the next device ID
-      const nextDeviceId = await getNextDeviceId();
-
-      // Insert new device with null user_id
-      const { error: insertError } = await supabase
+      // Get count of available (unassigned) devices
+      const { data: availableDevices } = await supabase
         .from("unit_devices")
-        .insert([{ device_id: nextDeviceId, user_id: null, username: null }]);
+        .select("device_id")
+        .is("user_id", null);
 
-      if (insertError) {
-        console.error("Error adding new device:", insertError);
-        setError("Error adding new device. Please try again.");
+      // Only allow adding a new device if there are fewer than 4 available devices
+      if (availableDevices && availableDevices.length >= 4) {
+        setError(
+          "Cannot add new device. Maximum number of available devices reached."
+        );
         return;
       }
 
-      // Refresh the available devices list
+      const nextDeviceId = await getNextDeviceId();
+      await supabase
+        .from("unit_devices")
+        .insert([{ device_id: nextDeviceId, user_id: null }]);
       await fetchAvailableDevices();
-
       setSuccessMessage(`New ${nextDeviceId} added successfully!`);
-      setIsAddingNewDevice(false);
-    } catch (err) {
-      console.error("Unexpected error adding device:", err);
+    } catch (error) {
+      console.error("Error adding device:", error);
       setError("An unexpected error occurred while adding the device.");
     } finally {
       setIsLoading(false);
