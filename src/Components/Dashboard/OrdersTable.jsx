@@ -9,13 +9,7 @@ export default function OrdersTable({
 }) {
   const [activeTab, setActiveTab] = useState("All");
 
-  // Group parcels by their status
   const groupParcelsByStatus = () => {
-    // For All tab: show all parcels
-    // For Pending tab: show parcels where status is "pending"
-    // For Completed tab: show parcels where status is "completed"
-    // For Oversized tab: show parcels where status is "oversized"
-
     const pending = topParcels.filter((parcel) => parcel.status === "pending");
 
     const completed = topParcels.filter(
@@ -33,7 +27,6 @@ export default function OrdersTable({
       Oversized: oversized,
     };
 
-    // Count the number of parcels in each category
     const counts = {
       All: topParcels.length,
       Pending: pending.length,
@@ -47,7 +40,6 @@ export default function OrdersTable({
   const { grouped, counts } = groupParcelsByStatus();
   const statusTabs = ["All", "Pending", "Completed", "Oversized"];
 
-  // Display a message if there are no parcels to show
   if (topParcels.length === 0) {
     return (
       <div className="show_orders">
@@ -79,7 +71,6 @@ export default function OrdersTable({
         </button>
       </div>
 
-      {/* Status tabs */}
       <div className="status-tabs">
         {statusTabs.map((status) => (
           <button
@@ -95,7 +86,6 @@ export default function OrdersTable({
         ))}
       </div>
 
-      {/* Parcel cards within the selected status group */}
       <div className="parcel-cards">
         {grouped[activeTab].length > 0 ? (
           grouped[activeTab].map((parcel, index) => {

@@ -32,21 +32,17 @@ export default function Dashboard({ userName, onLogout }) {
     setIsMenuActive((prevState) => !prevState);
   };
 
-  // Added for session verification
   useEffect(() => {
     async function verifySession() {
       setIsLoading(true);
       try {
-        // First check if we have a session
         const { data: sessionData } = await supabase.auth.getSession();
 
-        // If no session found, try to restore it from tokens in cookies
         if (!sessionData.session) {
           console.log(
             "No active session found, attempting to restore from cookies"
           );
 
-          // Get tokens from cookies if they exist
           const getTokenFromCookie = (name) => {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
@@ -59,7 +55,6 @@ export default function Dashboard({ userName, onLogout }) {
 
           if (accessToken && refreshToken) {
             console.log("Found tokens in cookies, trying to restore session");
-            // Explicitly set the session using tokens
             const { data, error } = await supabase.auth.setSession({
               access_token: accessToken,
               refresh_token: refreshToken,
@@ -67,19 +62,18 @@ export default function Dashboard({ userName, onLogout }) {
 
             if (error) {
               console.error("Failed to restore session from tokens:", error);
-              onLogout(); // Force logout on error
+              onLogout();
               return;
             }
 
             console.log("Session restored successfully");
           } else {
             console.log("No tokens found in cookies");
-            onLogout(); // No tokens found, force logout
+            onLogout();
             return;
           }
         }
 
-        // Verify the session works with a test query
         const { error: testError } = await supabase
           .from("unit_devices")
           .select("device_id")
@@ -90,29 +84,26 @@ export default function Dashboard({ userName, onLogout }) {
             "Session appears invalid, test query failed:",
             testError
           );
-          onLogout(); // Force logout if test query fails
+          onLogout();
           return;
         }
 
-        // If we get here, the session is valid
         console.log("Session verified successfully");
         setIsLoading(false);
 
-        // Fetch initial data
         getDeviceId();
         getSummary();
         getTopParcels();
         getRecentActivities();
       } catch (err) {
         console.error("Session verification error:", err);
-        onLogout(); // Force logout on any error
+        onLogout();
       }
     }
 
     verifySession();
   }, [onLogout]);
 
-  // Fetch the device ID of the logged-in user
   const getDeviceId = async () => {
     try {
       const {
@@ -127,11 +118,10 @@ export default function Dashboard({ userName, onLogout }) {
 
       if (!user) {
         console.error("User not found");
-        onLogout(); // Force logout if user not found
+        onLogout();
         return;
       }
 
-      // Fetch the device ID associated with the logged-in user
       const { data: deviceData, error: deviceError } = await supabase
         .from("unit_devices")
         .select("device_id")
@@ -148,7 +138,6 @@ export default function Dashboard({ userName, onLogout }) {
     }
   };
 
-  // Fetch today's and weekly parcel counts for the logged-in user
   const getSummary = async () => {
     try {
       const {
@@ -163,7 +152,7 @@ export default function Dashboard({ userName, onLogout }) {
 
       if (!user) {
         console.error("User not found");
-        onLogout(); // Force logout if user not found
+        onLogout();
         return;
       }
 
@@ -182,7 +171,6 @@ export default function Dashboard({ userName, onLogout }) {
         now.getDate() - now.getDay()
       );
 
-      // Fetch today's count for the logged-in user
       const { count: todayCount, error: todayError } = await supabase
         .from("user_order")
         .select("*", { count: "exact" })
@@ -190,7 +178,6 @@ export default function Dashboard({ userName, onLogout }) {
         .eq("username", user.user_metadata?.username || user.email)
         .gte("completed_at", startOfDay.toISOString());
 
-      // Fetch weekly count for the logged-in user
       const { count: weeklyCount, error: weeklyError } = await supabase
         .from("user_order")
         .select("*", { count: "exact" })
@@ -214,7 +201,6 @@ export default function Dashboard({ userName, onLogout }) {
     }
   };
 
-  // Fetch top parcels for the logged-in user
   const getTopParcels = async () => {
     try {
       const {
@@ -229,16 +215,15 @@ export default function Dashboard({ userName, onLogout }) {
 
       if (!user) {
         console.error("User not found");
-        onLogout(); // Force logout if user not found
+        onLogout();
         return;
       }
 
-      // Fetch all parcels (both pending and completed) instead of just completed ones
       const { data, error } = await supabase
         .from("user_order")
         .select("parcel_name, parcel_barcode, status, added_on, completed_at")
         .eq("username", user.user_metadata?.username || user.email)
-        .order("added_on", { ascending: false }); // Sort by added_on date instead
+        .order("added_on", { ascending: false });
 
       if (error) {
         console.error("Error fetching parcels:", error);
@@ -250,7 +235,6 @@ export default function Dashboard({ userName, onLogout }) {
     }
   };
 
-  // Fetch recent activities for the logged-in user
   const getRecentActivities = async () => {
     try {
       const {
@@ -265,7 +249,7 @@ export default function Dashboard({ userName, onLogout }) {
 
       if (!user) {
         console.error("User not found");
-        onLogout(); // Force logout if user not found
+        onLogout();
         return;
       }
 
@@ -302,7 +286,6 @@ export default function Dashboard({ userName, onLogout }) {
     }
   };
 
-  // Handle inserting a new parcel
   const handleInsert = async () => {
     setError("");
     setSuccess("");
@@ -352,9 +335,9 @@ export default function Dashboard({ userName, onLogout }) {
         setSuccess("Parcel details inserted successfully");
         setParcelName("");
         setParcelBarcode("");
-        getSummary(); // Update summary
-        getTopParcels(); // Update top parcels
-        getRecentActivities(); // Update recent activities
+        getSummary();
+        getTopParcels();
+        getRecentActivities();
       }
     } catch (err) {
       console.error("Error in handleInsert:", err);
@@ -370,13 +353,13 @@ export default function Dashboard({ userName, onLogout }) {
   };
 
   const handleRefresh = async () => {
-    setRefresh(true); // Set refresh state to true
+    setRefresh(true);
     try {
       await Promise.all([getSummary(), getTopParcels(), getRecentActivities()]); // Fetch all data
     } catch (error) {
       console.error("Error during refresh:", error);
     } finally {
-      setRefresh(false); // Reset refresh state to false
+      setRefresh(false);
     }
   };
 
@@ -401,7 +384,6 @@ export default function Dashboard({ userName, onLogout }) {
   return (
     <div>
       <div className="page_layout">
-        {/* NAVIGATION BAR */}
         <div className={`nav${isMenuActive ? "-active" : ""}`}>
           <Navigation onLogout={onLogout} deviceId={deviceId} />
         </div>
@@ -409,8 +391,8 @@ export default function Dashboard({ userName, onLogout }) {
           className="menu_btn"
           onClick={handleMenuToggle}
           aria-label="Toggle Navigation Menu"
-          disabled={showModal} // Disable the menu button when modal is open
-          style={{ pointerEvents: showModal ? "none" : "auto" }} // Additional visual indicator
+          disabled={showModal}
+          style={{ pointerEvents: showModal ? "none" : "auto" }}
         >
           <img className="menu_img" src={menu} alt="Menu" />
         </button>

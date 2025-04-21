@@ -7,10 +7,9 @@ import "./Account.css";
 
 export default function Account({ onLogout }) {
   const [username, setUsername] = useState("");
-  const [originalUsername, setOriginalUsername] = useState(""); // To track the original username
+  const [originalUsername, setOriginalUsername] = useState("");
   const [email, setEmail] = useState("");
 
-  // Password states for the password update section
   const [passwordCurrentPassword, setPasswordCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -47,10 +46,8 @@ export default function Account({ onLogout }) {
     fetchUser();
   }, []);
 
-  // Function to update username across all relevant tables
   const updateUsernameInTables = async (oldUsername, newUsername) => {
     try {
-      // Begin a transaction across multiple tables
       const tables = ["unit_devices", "user_order", "users"];
       const updates = tables.map((table) =>
         supabase
@@ -59,10 +56,8 @@ export default function Account({ onLogout }) {
           .eq("username", oldUsername)
       );
 
-      // Execute all updates
       const results = await Promise.all(updates);
 
-      // Check for errors in any of the updates
       const errors = results.filter((result) => result.error);
       if (errors.length > 0) {
         console.error("Errors updating username in tables:", errors);
@@ -92,7 +87,6 @@ export default function Account({ onLogout }) {
         return;
       }
 
-      // First update in Auth service
       const { error } = await supabase.auth.updateUser({
         data: { username },
       });
@@ -102,14 +96,12 @@ export default function Account({ onLogout }) {
         return;
       }
 
-      // Then update in custom tables
       const updateResult = await updateUsernameInTables(
         originalUsername,
         username
       );
 
       if (!updateResult.success) {
-        // If database update fails, try to revert Auth update
         await supabase.auth.updateUser({
           data: { username: originalUsername },
         });
@@ -118,7 +110,7 @@ export default function Account({ onLogout }) {
       }
 
       setSuccess("Username updated successfully");
-      setOriginalUsername(username); // Update the original username reference
+      setOriginalUsername(username);
     } catch (error) {
       setError("An unexpected error occurred");
     } finally {
@@ -160,7 +152,6 @@ export default function Account({ onLogout }) {
         return;
       }
 
-      // Update password in Auth service
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });

@@ -10,7 +10,6 @@ export default function Navigation({ onLogout, deviceId }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    // Prevent multiple clicks
     if (isLoggingOut) return;
 
     setIsLoggingOut(true);
@@ -18,7 +17,6 @@ export default function Navigation({ onLogout, deviceId }) {
     try {
       console.log("Logout initiated with deviceId:", deviceId);
 
-      // Use the secureLogout function from supabase.js
       const { success, error } = await secureLogout(deviceId);
 
       if (!success) {
@@ -29,12 +27,10 @@ export default function Navigation({ onLogout, deviceId }) {
 
       console.log("User signed out successfully");
 
-      // Call the parent's onLogout function if it exists
       if (typeof onLogout === "function") {
         await onLogout();
       }
 
-      // Navigate to login page
       navigate("/login");
     } catch (err) {
       console.error("Unexpected error during logout:", err);

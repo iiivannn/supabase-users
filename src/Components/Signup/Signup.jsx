@@ -9,7 +9,7 @@ import img3 from "../../assets/parcel3.jpg";
 import img4 from "../../assets/parcel4.jpg";
 import Carousel from "../Carousel/Carousel";
 
-import "../Login/Login.css"; // Reusing the same CSS file
+import "../Login/Login.css";
 
 export default function Signup({ onNewSignup }) {
   const [email, setEmail] = useState("");
@@ -24,11 +24,9 @@ export default function Signup({ onNewSignup }) {
   const carouselImages = [img4, img1, img2, img3];
 
   const handleSignup = async () => {
-    // Reset previous errors
     setError("");
     setSuccessMessage("");
 
-    // Validate inputs
     if (!username) {
       setError("Username is required");
       return;
@@ -51,10 +49,8 @@ export default function Signup({ onNewSignup }) {
 
     setIsLoading(true);
     try {
-      // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Insert user details into the 'users' table
       const { error: insertError } = await supabase.from("users").insert([
         {
           username,
@@ -69,7 +65,6 @@ export default function Signup({ onNewSignup }) {
         return;
       }
 
-      // Call the onNewSignup method before signing up (if provided)
       if (onNewSignup) {
         onNewSignup();
       }
@@ -86,12 +81,10 @@ export default function Signup({ onNewSignup }) {
         setError(error.message);
         setIsLoading(false);
       } else {
-        // Force sign out after signup
         await supabase.auth.signOut();
 
         setSuccessMessage("Signup successful! Redirecting to login...");
 
-        // Redirect after a short delay to show success message
         setTimeout(() => {
           navigate("/login");
         }, 1500);
@@ -105,7 +98,6 @@ export default function Signup({ onNewSignup }) {
 
   return (
     <div className="login-container signup-wrapper">
-      {/* Info section with image - same as login page */}
       <div className="info-section">
         <div className="info-headings">
           <div className="signup-texts">
@@ -120,7 +112,6 @@ export default function Signup({ onNewSignup }) {
         </div>
       </div>
 
-      {/* Signup form section */}
       <div className="login-form-section">
         <div className="login-form-container">
           <img src={logo} className="logo-img" alt="ParSafe-Logo" />

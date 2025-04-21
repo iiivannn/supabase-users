@@ -39,7 +39,6 @@ function App() {
 
     fetchSession();
 
-    // Listen for authentication state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log("Auth state change event:", event); // Debugging log
@@ -60,12 +59,10 @@ function App() {
     };
   }, [isNewSignup]);
 
-  // Method to set signup flag before signup
   const handleNewSignup = () => {
     setIsNewSignup(true);
   };
 
-  // Logout handler to be passed down to Dashboard or other components
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };

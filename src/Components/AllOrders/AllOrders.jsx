@@ -41,7 +41,6 @@ export default function AllOrders({ onLogout }) {
         setError(error.message);
       } else {
         setOrders(data);
-        // Clear selected rows when orders are refreshed
         setSelectedRows([]);
       }
     },
@@ -63,11 +62,10 @@ export default function AllOrders({ onLogout }) {
 
     setCompletedCount(completed);
     setPendingCount(pending);
-    setOversizedCount(oversized); // Add a new state for oversized count
+    setOversizedCount(oversized);
   }, [orders]);
 
   const handleSort = (field) => {
-    // If clicking the same field, toggle direction
     const newDirection = field === sortField ? !sortDirection : false;
     setSortField(field);
     setSortDirection(newDirection);
@@ -88,7 +86,6 @@ export default function AllOrders({ onLogout }) {
     return date;
   };
 
-  // Handle checkbox selection
   const handleRowSelect = (orderId) => {
     setSelectedRows((prevSelected) => {
       if (prevSelected.includes(orderId)) {
@@ -108,7 +105,6 @@ export default function AllOrders({ onLogout }) {
     }
   };
 
-  // Handle delete of selected rows
   const handleDeleteSelected = async () => {
     if (selectedRows.length === 0) return;
 
@@ -121,7 +117,6 @@ export default function AllOrders({ onLogout }) {
       if (error) {
         setError(`Error deleting orders: ${error.message}`);
       } else {
-        // Refresh orders after deletion
         fetchOrders();
       }
     } catch (err) {

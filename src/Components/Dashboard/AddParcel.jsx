@@ -15,20 +15,16 @@ export default function AddParcel({
   setShowModal,
   showModal,
 }) {
-  // State for notification modal
   const [showNotification, setShowNotification] = useState(false);
 
-  // Function to toggle help modal
   const toggleModal = () => {
     setShowModal(!showModal);
   };
 
-  // Show notification modal when success or error changes
   useEffect(() => {
     if (success || error) {
       setShowNotification(true);
 
-      // Auto-hide notification after 3 seconds
       const timer = setTimeout(() => {
         setShowNotification(false);
       }, 4000);
@@ -37,7 +33,6 @@ export default function AddParcel({
     }
   }, [success, error]);
 
-  // Function to close notification modal
   const closeNotification = () => {
     setShowNotification(false);
   };
@@ -95,7 +90,6 @@ export default function AddParcel({
         </div>
       )}
 
-      {/* Notification Modal for Success/Error Messages */}
       {showNotification && (success || error) && (
         <div className="notification-overlay">
           <div
@@ -113,7 +107,6 @@ export default function AddParcel({
         </div>
       )}
 
-      {/* Input Fields */}
       <div className="input_wrapper">
         <div className="input_name">
           <label htmlFor="parcel_name">Parcel Name: </label>

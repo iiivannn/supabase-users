@@ -3,7 +3,6 @@ import { createClient } from "@supabase/supabase-js";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Improved cookie functions
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -22,7 +21,6 @@ function removeCookie(name) {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
-// Create the Supabase client
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     persistSession: true,
@@ -33,10 +31,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         return getCookie(key);
       },
       setItem: (key, value) => {
-        // Use 90 days for long persistence
         setCookie(key, value, 90);
 
-        // Also store separately for direct access
         if (key === "sb-access-token" || key === "sb-refresh-token") {
           setCookie(key, value, 90);
         }
@@ -48,25 +44,21 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   },
 });
 
-// Listen for auth state changes
 supabase.auth.onAuthStateChange(async (event, session) => {
   console.log("Auth event:", event);
 
   if (event === "SIGNED_IN" && session) {
     console.log("User signed in, ensuring persistence");
 
-    // Ensure tokens are saved with long expiration
     setCookie("sb-access-token", session.access_token, 90);
     setCookie("sb-refresh-token", session.refresh_token, 90);
 
-    // Optional: Store additional user info
     if (session.user) {
       setCookie("user-id", session.user.id, 90);
     }
   } else if (event === "SIGNED_OUT") {
     console.log("User signed out, clearing cookies");
 
-    // Clear all auth-related cookies
     [
       "sb-access-token",
       "sb-refresh-token",
@@ -84,10 +76,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 });
 
-// Helper to check and restore session if needed
 export async function ensureSession() {
   try {
-    // First check if we have a session
     const { data } = await supabase.auth.getSession();
 
     if (!data.session) {
@@ -116,7 +106,6 @@ export async function ensureSession() {
   }
 }
 
-// Immediately try to restore session when the module loads
 (async function () {
   try {
     await ensureSession();
@@ -125,14 +114,11 @@ export async function ensureSession() {
   }
 })();
 
-// Comprehensive logout function that ensures everything is cleaned up
 export async function secureLogout(deviceId) {
   try {
-    // First attempt to release device if we have a device ID
     if (deviceId) {
       console.log("Releasing device:", deviceId);
 
-      // Make multiple attempts if needed
       let attempts = 0;
       let updateSuccess = false;
 
@@ -154,7 +140,6 @@ export async function secureLogout(deviceId) {
             `Device update attempt ${attempts} failed:`,
             updateError
           );
-          // Short delay before retry
           if (attempts < 3) await new Promise((r) => setTimeout(r, 300));
         } else {
           console.log("Device successfully released");
@@ -170,7 +155,6 @@ export async function secureLogout(deviceId) {
       console.warn("No deviceId provided for logout");
     }
 
-    // Then sign out the user
     const { error: signOutError } = await supabase.auth.signOut();
 
     if (signOutError) {
@@ -178,7 +162,6 @@ export async function secureLogout(deviceId) {
       return { success: false, error: signOutError };
     }
 
-    // Clear all potential storage locations
     [
       "sb-access-token",
       "sb-refresh-token",

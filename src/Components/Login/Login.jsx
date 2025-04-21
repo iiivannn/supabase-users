@@ -25,16 +25,13 @@ export default function Login() {
   const carouselImages = [img1, img2, img3, img4];
   const MAX_DEVICES = 4;
 
-  // Fetch available device IDs on component mount
   useEffect(() => {
     fetchAvailableDevices();
   }, []);
 
-  // Function to fetch available device IDs that don't have users associated
   const fetchAvailableDevices = async () => {
     setIsLoading(true);
     try {
-      // Query for devices with null or empty user_id
       const { data, error } = await supabase
         .from("unit_devices")
         .select("device_id")
@@ -46,7 +43,6 @@ export default function Login() {
       } else {
         setAvailableDevices(data || []);
 
-        // If there are available devices, set the first one as default
         if (data && data.length > 0) {
           setDeviceId(data[0].device_id);
         } else {
@@ -61,24 +57,21 @@ export default function Login() {
     }
   };
 
-  // Function to get the next device ID
   const getNextDeviceId = async () => {
     try {
-      // Get all device IDs to find the highest device number
       const { data, error } = await supabase
         .from("unit_devices")
         .select("device_id");
 
       if (error) {
         console.error("Error fetching devices for ID generation:", error);
-        return "Device ID: 1"; // Default if error
+        return "Device ID: 1";
       }
 
       if (!data || data.length === 0) {
-        return "Device ID: 1"; // First device
+        return "Device ID: 1";
       }
 
-      // Find the highest device number
       let highestNumber = 0;
       data.forEach((device) => {
         // Extract number from "Device ID: X" format
@@ -94,11 +87,10 @@ export default function Login() {
       return `Device ID: ${highestNumber + 1}`;
     } catch (err) {
       console.error("Error generating next device ID:", err);
-      return "Device ID: 1"; // Default if error
+      return "Device ID: 1";
     }
   };
 
-  // Function to handle adding a new device
   const handleAddNewDevice = async () => {
     setIsLoading(true);
     try {
@@ -113,13 +105,11 @@ export default function Login() {
       //   return;
       // }
 
-      // Get count of available (unassigned) devices
       const { data: availableDevices } = await supabase
         .from("unit_devices")
         .select("device_id")
         .is("user_id", null);
 
-      // Only allow adding a new device if there are fewer than 4 available devices
       if (availableDevices && availableDevices.length >= 4) {
         setShowMaxDeviceModal(true);
         setError(
@@ -146,7 +136,6 @@ export default function Login() {
     setError("");
     setSuccessMessage("");
 
-    // Validate inputs
     if (!email) {
       setError("Email is required");
       return;
@@ -162,7 +151,6 @@ export default function Login() {
 
     setIsLoading(true);
     try {
-      // Sign in user
       const { data, error: signInError } =
         await supabase.auth.signInWithPassword({
           email: email,
@@ -175,11 +163,9 @@ export default function Login() {
         return;
       }
 
-      // Get user UUID and username from the authenticated user
       const userUuid = data.user.id;
       const username = data.user.user_metadata?.username || email;
 
-      // Check if the selected device is still available
       const { data: deviceData, error: deviceError } = await supabase
         .from("unit_devices")
         .select("user_id")
@@ -192,7 +178,6 @@ export default function Login() {
         return;
       }
 
-      // Check if the user is already associated with another device
       const { data: existingDevices, error: existingDeviceError } =
         await supabase
           .from("unit_devices")
@@ -209,9 +194,7 @@ export default function Login() {
         return;
       }
 
-      // If user has existing device associations, clear them
       if (existingDevices && existingDevices.length > 0) {
-        // Clear all existing device associations for this user
         const { error: clearError } = await supabase
           .from("unit_devices")
           .update({ user_id: null, username: null, isLogout: true })
@@ -234,7 +217,6 @@ export default function Login() {
         );
       }
 
-      // Update the device with the user's information
       const { error: updateError } = await supabase
         .from("unit_devices")
         .update({
@@ -256,7 +238,6 @@ export default function Login() {
       setSuccessMessage("Login successful! Redirecting...");
       console.log(`User logged in: ${username} with device: ${deviceId}`);
 
-      // Redirect after a short delay to show success message
       setTimeout(() => {
         navigate("/");
       }, 1000);
@@ -267,14 +248,12 @@ export default function Login() {
     }
   };
 
-  // Function to close the max device modal
   const closeMaxDeviceModal = () => {
     setShowMaxDeviceModal(false);
   };
 
   return (
     <div className="login-container">
-      {/* Max Device Modal */}
       {showMaxDeviceModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -288,7 +267,6 @@ export default function Login() {
         </div>
       )}
 
-      {/* Login form section */}
       <div className="login-form-section">
         <div className="login-form-container">
           <img src={logo} className="logo-img" alt="ParSafe-Logo" />
@@ -426,7 +404,6 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Info section with image - no container, just floating text and image */}
       <div className="info-section">
         <div className="info-headings">
           <div className="info-texts">
