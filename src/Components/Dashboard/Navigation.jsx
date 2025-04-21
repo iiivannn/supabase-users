@@ -1,80 +1,46 @@
+/* eslint-disable no-unused-vars */
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/parsafe_logo.png";
-import { supabase } from "../../supabase";
+import { useState } from "react";
 import "./Dashboard.css";
+import { supabase, secureLogout } from "../../supabase";
 
 export default function Navigation({ onLogout, deviceId }) {
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
+    // Prevent multiple clicks
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
     try {
-      // Debug logs to trace values
       console.log("Logout initiated with deviceId:", deviceId);
 
-      // Step 1: Get the current user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+      // Use the secureLogout function from supabase.js
+      const { success, error } = await secureLogout(deviceId);
 
-      if (userError) {
-        console.error("Error fetching user during logout:", userError);
-        // Continue with logout even if we can't get the user
-      }
-
-      // Step 2: Update the device record if we have both user and deviceId
-      if (user && deviceId) {
-        console.log(
-          "Attempting to update device:",
-          deviceId,
-          "for user:",
-          user.id
-        );
-
-        const { error: updateError, data: updateResult } = await supabase
-          .from("unit_devices")
-          .update({
-            user_id: null,
-            username: null,
-            isLogout: true,
-            isOccupied: false,
-          })
-          .eq("device_id", deviceId);
-
-        if (updateError) {
-          console.error("Error updating device:", updateError);
-          // Don't return - continue with logout even if update fails
-        } else {
-          console.log("Device update result:", updateResult);
-        }
-      } else {
-        console.warn("Missing user or deviceId for device update:", {
-          hasUser: !!user,
-          deviceId,
-        });
-      }
-
-      // Step 3: Sign out from Supabase Auth
-      const { error: signOutError } = await supabase.auth.signOut();
-
-      if (signOutError) {
-        console.error("Error signing out:", signOutError);
+      if (!success) {
+        console.error("Error during secure logout:", error);
         alert("Error signing out. Please try again.");
         return;
       }
 
-      // Step 4: Call the parent's onLogout function if it exists
+      console.log("User signed out successfully");
+
+      // Call the parent's onLogout function if it exists
       if (typeof onLogout === "function") {
         await onLogout();
-      } else {
-        console.warn("onLogout function is not defined");
       }
 
-      // Step 5: Navigate to login page
+      // Navigate to login page
       navigate("/login");
     } catch (err) {
       console.error("Unexpected error during logout:", err);
-      alert("An unexpected error occurred. Please try again.");
+      alert("An unexpected error occurred during logout. Please try again.");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -98,8 +64,12 @@ export default function Navigation({ onLogout, deviceId }) {
           <button className="link-button" onClick={() => navigate("/account")}>
             Account
           </button>
-          <button className="link-button" onClick={handleLogout}>
-            Logout
+          <button
+            className="link-button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? "Logging out..." : "Logout"}
           </button>
         </div>
       </div>

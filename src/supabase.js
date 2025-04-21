@@ -124,3 +124,76 @@ export async function ensureSession() {
     console.error("Initial session recovery error:", err);
   }
 })();
+
+// Comprehensive logout function that ensures everything is cleaned up
+export async function secureLogout(deviceId) {
+  try {
+    // First attempt to release device if we have a device ID
+    if (deviceId) {
+      console.log("Releasing device:", deviceId);
+
+      // Make multiple attempts if needed
+      let attempts = 0;
+      let updateSuccess = false;
+
+      while (attempts < 3 && !updateSuccess) {
+        attempts++;
+
+        const { error: updateError } = await supabase
+          .from("unit_devices")
+          .update({
+            user_id: null,
+            username: null,
+            isLogout: true,
+            isOccupied: false,
+          })
+          .eq("device_id", deviceId);
+
+        if (updateError) {
+          console.error(
+            `Device update attempt ${attempts} failed:`,
+            updateError
+          );
+          // Short delay before retry
+          if (attempts < 3) await new Promise((r) => setTimeout(r, 300));
+        } else {
+          console.log("Device successfully released");
+          updateSuccess = true;
+        }
+      }
+
+      if (!updateSuccess) {
+        console.error("Failed to update device after multiple attempts");
+        // Continue with logout anyway
+      }
+    } else {
+      console.warn("No deviceId provided for logout");
+    }
+
+    // Then sign out the user
+    const { error: signOutError } = await supabase.auth.signOut();
+
+    if (signOutError) {
+      console.error("Error signing out:", signOutError);
+      return { success: false, error: signOutError };
+    }
+
+    // Clear all potential storage locations
+    [
+      "sb-access-token",
+      "sb-refresh-token",
+      "supabase-auth-token",
+      "user-id",
+      "device-id",
+    ].forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+      removeCookie(key);
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Secure logout failed:", error);
+    return { success: false, error };
+  }
+}
