@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/parsafe_logo.png";
 import { useState } from "react";
@@ -24,6 +23,8 @@ export default function Navigation({ onLogout, deviceId }) {
         alert("Error signing out. Please try again.");
         return;
       }
+
+      await supabase.auth.signOut();
 
       console.log("User signed out successfully");
 
@@ -60,6 +61,7 @@ export default function Navigation({ onLogout, deviceId }) {
           <button className="link-button" onClick={() => navigate("/account")}>
             Account
           </button>
+
           <button
             className="link-button"
             onClick={handleLogout}
