@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabase";
-import bcrypt from "bcryptjs";
+
 import logo from "../../assets/parsafe_logo.png";
 import img1 from "../../assets/parcel1.jpg";
 import img2 from "../../assets/parcel2.jpg";
@@ -49,13 +49,25 @@ export default function Signup({ onNewSignup }) {
 
     setIsLoading(true);
     try {
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { username },
+        },
+      });
+
+      if (error) {
+        setError(error.message);
+        setIsLoading(false);
+        return;
+      }
 
       const { error: insertError } = await supabase.from("users").insert([
         {
+          id: data.user.id,
           username,
           email,
-          password: hashedPassword,
         },
       ]);
 
@@ -69,26 +81,13 @@ export default function Signup({ onNewSignup }) {
         onNewSignup();
       }
 
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username },
-        },
-      });
+      await supabase.auth.signOut();
 
-      if (error) {
-        setError(error.message);
-        setIsLoading(false);
-      } else {
-        await supabase.auth.signOut();
+      setSuccessMessage("Signup successful! Redirecting to login...");
 
-        setSuccessMessage("Signup successful! Redirecting to login...");
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 1500);
-      }
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
     } catch (err) {
       setError("An unexpected error occurred");
       console.error(err);

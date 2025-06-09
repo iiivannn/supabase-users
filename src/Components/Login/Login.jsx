@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabase";
 import "./Login.css";
 import Carousel from "../Carousel/Carousel";
-import bcrypt from "bcryptjs";
+
 import logo from "../../assets/parsafe_logo.png";
 import img1 from "../../assets/parcel1.jpg";
 import img2 from "../../assets/parcel2.jpg";
@@ -151,27 +151,20 @@ export default function Login() {
 
     setIsLoading(true);
     try {
-      const { data: userData, error: userError } = await supabase
-        .from("users")
-        .select("*")
-        .eq("email", email)
-        .single();
+      const { data, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
 
-      if (userError || !userData) {
-        setError("Invalid email or password.");
+      if (signInError) {
+        setError(signInError.message);
         setIsLoading(false);
         return;
       }
 
-      const passwordMatch = await bcrypt.compare(password, userData.password);
-      if (!passwordMatch) {
-        setError("Invalid email or password.");
-        setIsLoading(false);
-        return;
-      }
-
-      const userUuid = userData.id;
-      const username = userData.username || email;
+      const userUuid = data.user.id;
+      const username = data.user.user_metadata?.username || email;
 
       const { data: deviceData, error: deviceError } = await supabase
         .from("unit_devices")
