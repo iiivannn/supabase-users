@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabase";
 import "./Login.css";
 import Carousel from "../Carousel/Carousel";
-
+import bcrypt from "bcryptjs";
 import logo from "../../assets/parsafe_logo.png";
 import img1 from "../../assets/parcel1.jpg";
 import img2 from "../../assets/parcel2.jpg";
@@ -151,21 +151,32 @@ export default function Login() {
 
     setIsLoading(true);
     try {
-      const { data, error: signInError } =
-        await supabase.auth.signInWithPassword({
-          email: email,
-          password: password,
-        });
+      // 1. Fetch user by email from your custom users table
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", email)
+        .single();
 
-      if (signInError) {
-        setError(signInError.message);
+      if (userError || !userData) {
+        setError("Invalid email or password.");
         setIsLoading(false);
         return;
       }
 
-      const userUuid = data.user.id;
-      const username = data.user.user_metadata?.username || email;
+      // 2. Compare entered password with stored hash
+      const passwordMatch = await bcrypt.compare(password, userData.password);
+      if (!passwordMatch) {
+        setError("Invalid email or password.");
+        setIsLoading(false);
+        return;
+      }
 
+      // At this point, authentication is successful!
+      const userUuid = userData.id; // Use the ID from your custom users table
+      const username = userData.username || email;
+
+      // Check if the selected device is still available
       const { data: deviceData, error: deviceError } = await supabase
         .from("unit_devices")
         .select("user_id")
@@ -178,6 +189,7 @@ export default function Login() {
         return;
       }
 
+      // Check for existing device associations for this user
       const { data: existingDevices, error: existingDeviceError } =
         await supabase
           .from("unit_devices")
@@ -194,6 +206,7 @@ export default function Login() {
         return;
       }
 
+      // Clear existing device associations if any
       if (existingDevices && existingDevices.length > 0) {
         const { error: clearError } = await supabase
           .from("unit_devices")
@@ -217,6 +230,7 @@ export default function Login() {
         );
       }
 
+      // Associate the user with the selected device
       const { error: updateError } = await supabase
         .from("unit_devices")
         .update({
