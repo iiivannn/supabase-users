@@ -151,7 +151,6 @@ export default function Login() {
 
     setIsLoading(true);
     try {
-      // 1. Fetch user by email from your custom users table
       const { data: userData, error: userError } = await supabase
         .from("users")
         .select("*")
@@ -164,7 +163,6 @@ export default function Login() {
         return;
       }
 
-      // 2. Compare entered password with stored hash
       const passwordMatch = await bcrypt.compare(password, userData.password);
       if (!passwordMatch) {
         setError("Invalid email or password.");
@@ -172,11 +170,9 @@ export default function Login() {
         return;
       }
 
-      // At this point, authentication is successful!
-      const userUuid = userData.id; // Use the ID from your custom users table
+      const userUuid = userData.id;
       const username = userData.username || email;
 
-      // Check if the selected device is still available
       const { data: deviceData, error: deviceError } = await supabase
         .from("unit_devices")
         .select("user_id")
@@ -189,7 +185,6 @@ export default function Login() {
         return;
       }
 
-      // Check for existing device associations for this user
       const { data: existingDevices, error: existingDeviceError } =
         await supabase
           .from("unit_devices")
@@ -206,7 +201,6 @@ export default function Login() {
         return;
       }
 
-      // Clear existing device associations if any
       if (existingDevices && existingDevices.length > 0) {
         const { error: clearError } = await supabase
           .from("unit_devices")
@@ -230,7 +224,6 @@ export default function Login() {
         );
       }
 
-      // Associate the user with the selected device
       const { error: updateError } = await supabase
         .from("unit_devices")
         .update({
